@@ -1,7 +1,7 @@
 # Pipeline temporarily disabled during initial development
 # Uncomment when ready to implement CI/CD
 
-# image: node:18
+image: node:18
 
 # variables:
 #   MAIN_BRANCH: main
@@ -19,22 +19,16 @@
 #     - frontend/.npm/
 #     - .yarn-cache/
 
-# workflow:
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MAIN_BRANCH
-#     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $DEVELOP_BRANCH
-#     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-#     - if: $CI_COMMIT_TAG
-#     - if: $CI_PIPELINE_SOURCE == "web"
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MAIN_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $DEVELOP_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web"
 
-# stages:
-#   - setup
-#   - quality
-#   - test
-#   - build
-#   - security
-#   - performance
-#   - deploy
+stages:
+  - build
 
 # # Frontend Setup
 # frontend-install:
@@ -90,16 +84,16 @@
 #     expire_in: 1 week
 
 # # Build Stage
-# frontend-build:
-#   stage: build
-#   needs: ["frontend-install", "frontend-lint", "frontend-type-check", "frontend-unit-test"]
-#   script:
-#     - cd frontend
-#     - npm run build
-#   artifacts:
-#     paths:
-#       - frontend/dist/
-#     expire_in: 1 week
+build:
+  stage: build
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1 week
 
 # # Security Checks
 # frontend-dependency-scan:
