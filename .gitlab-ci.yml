@@ -5,11 +5,7 @@ variables:
   DEVELOP_BRANCH: develop
   VITE_APP_API_URL: ${VITE_APP_API_URL}
 
-default:
-  tags:
-    - docker
-    - linux
-
+# Removing specific tags to use any available runner
 # Cache dependencies for faster builds
 cache:
   key:
