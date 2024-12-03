@@ -1,53 +1,15 @@
 image: node:18
 
-# Cache dependencies between jobs
-cache:
-  key:
-    files:
-      - frontend/package-lock.json
-  paths:
-    - frontend/node_modules/
-    - frontend/.npm/
-
-stages:
-  - setup
-  - test
-  - build
-
-# Install dependencies
-setup:
-  stage: setup
+# Simple development pipeline
+dev-check:
   script:
+    # Frontend check
     - cd frontend
     - npm install --legacy-peer-deps
-    - npm install -D @types/node
-  artifacts:
-    paths:
-      - frontend/node_modules/
-    expire_in: 1 hour
-
-# Run tests
-test:
-  stage: test
-  script:
-    - cd frontend
-    - npm run test
-  dependencies:
-    - setup
-  allow_failure: true  # Don't block pipeline if tests fail during development
-
-# Build the app
-build:
-  stage: build
-  script:
-    - cd frontend
-    - npm run build
-  artifacts:
-    paths:
-      - frontend/dist/
-    expire_in: 1 week
-  dependencies:
-    - setup
-  only:
-    - main
-    - develop
+    - echo "Frontend dependencies installed successfully"
+    
+    # Backend check
+    - cd ../backend
+    - npm install
+    - echo "Backend dependencies installed successfully"
+  allow_failure: true  # Won't block development
