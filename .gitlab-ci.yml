@@ -98,12 +98,16 @@ frontend-dependency-scan:
   needs: ["frontend-install"]
   script:
     - cd frontend
-    - npx audit-ci --moderate
-    - npx snyk test || true
+    - npm install -g audit-ci
+    - audit-ci --moderate
+    - npm install -g snyk
+    - snyk test || true
+    - snyk monitor || true
   allow_failure: true
   artifacts:
     reports:
-      security: frontend/security-report.json
+      dependency_scanning: frontend/dependency-scan.json
+      sast: frontend/sast-report.json
 
 # Bundle Analysis
 frontend-bundle-analysis:
