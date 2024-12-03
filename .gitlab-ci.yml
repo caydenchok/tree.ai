@@ -5,6 +5,11 @@ variables:
   DEVELOP_BRANCH: develop
   VITE_APP_API_URL: ${VITE_APP_API_URL}
 
+default:
+  tags:
+    - docker
+    - linux
+
 # Cache dependencies for faster builds
 cache:
   key:
@@ -17,10 +22,11 @@ cache:
 
 workflow:
   rules:
-    - if: $CI_COMMIT_BRANCH == $MAIN_BRANCH
-    - if: $CI_COMMIT_BRANCH == $DEVELOP_BRANCH
-    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MAIN_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $DEVELOP_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web"
 
 stages:
   - setup
