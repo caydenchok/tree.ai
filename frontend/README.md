@@ -1,50 +1,76 @@
-# React + TypeScript + Vite
+# TREE8 GLOBAL Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+Frontend for the TREE8 GLOBAL Malaysian education platform, built with React, TypeScript, and Vite. Features a modern UI with mobile-first design and support for multiple Malaysian school systems (SK/SJKC/SJKT).
 
-Currently, two official plugins are available:
+## Tech Stack
+- React 18 with TypeScript
+- Vite for build tooling
+- Chakra UI for components
+- Framer Motion for animations
+- Redux Toolkit for state management
+- Vitest for testing
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Key Features
+- Multi-language support (BM/English/Mandarin/Tamil)
+- Responsive design for all devices
+- Dark/Light theme
+- AI-powered learning assistant
+- Interactive tech tree background
+- Real-time chat system
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```bash
+# Install dependencies
+npm install --legacy-peer-deps
 
-- Configure the top-level `parserOptions` property like this:
+# Start development server
+npm run dev
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# Run tests
+npm run test
+
+# Build for production
+npm run build
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## Project Structure
 ```
+src/
+├── assets/         # Static assets
+├── components/     # Reusable UI components
+├── contexts/       # React contexts
+├── hooks/         # Custom React hooks
+├── i18n/          # Internationalization
+├── pages/         # Main page components
+├── services/      # API services
+├── store/         # Redux store
+├── theme/         # UI theme
+├── types/         # TypeScript types
+└── utils/         # Utility functions
+```
+
+## Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run test` - Run Vitest tests
+- `npm run test:coverage` - Run tests with coverage
+- `npm run test:ui` - Run tests with UI
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
+
+## Development Guidelines
+1. Follow the established component structure
+2. Use TypeScript strictly
+3. Write tests for new features
+4. Follow Chakra UI theming
+5. Maintain mobile-first approach
+
+## Current Status
+- Core UI components
+- Mobile optimization
+- Authentication system
+- AI chat interface
+- Malaysian curriculum integration
+- Multi-language support

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BsTrash, BsStars, BsSend, BsThreeDotsVertical, BsCopy, BsDownload, BsClock, BsChat, BsFileText, BsTable, BsPeople, BsX, BsArrowLeft, BsBookmark, BsBookmarkFill } from 'react-icons/bs';
 import { IoRefreshOutline } from 'react-icons/io5';
 import { FiClock, FiTrash2 } from 'react-icons/fi';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import TechTreeBackground from '../components/common/TechTreeBackground/TechTreeBackground';
 import { keyframes } from '@emotion/react';
 import { FaUser, FaRobot, FaFileUpload, FaCamera, FaPaperPlane, FaCrown } from 'react-icons/fa';
@@ -167,7 +167,7 @@ const TreeChat: React.FC = () => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleRateLimit = () => {
+  const handleRateLimit = useCallback(() => {
     const endTime = new Date();
     endTime.setHours(endTime.getHours() + 1);
     setRateLimitEndTime(endTime);
@@ -198,7 +198,7 @@ const TreeChat: React.FC = () => {
       isClosable: true,
       position: "top",
     });
-  };
+  }, [formatTimeRemaining]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -295,7 +295,7 @@ const TreeChat: React.FC = () => {
 
   const messagesEndRef = useRef(null);
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen: handleOpen, onClose } = useDisclosure();
 
   // Sample saved messages
   const [savedMessages, setSavedMessages] = useState([

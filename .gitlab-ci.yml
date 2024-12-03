@@ -1,15 +1,23 @@
 image: node:18
 
+# Cache dependencies
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - frontend/node_modules/
+    - backend/node_modules/
+
 # Simple development pipeline
 dev-check:
   script:
     # Frontend check
     - cd frontend
     - npm install --legacy-peer-deps
-    - echo "Frontend dependencies installed successfully"
+    - npm run tsc --if-present  # Only type check, don't block on other errors
+    - echo "Frontend check completed"
     
     # Backend check
     - cd ../backend
     - npm install
-    - echo "Backend dependencies installed successfully"
+    - echo "Backend check completed"
   allow_failure: true  # Won't block development
