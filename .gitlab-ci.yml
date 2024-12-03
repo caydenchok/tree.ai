@@ -1,12 +1,52 @@
 image: node:18
 
-workflow:
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_BRANCH == "develop"
+# Cache dependencies between jobs
+cache:
+  key:
+    files:
+      - frontend/package-lock.json
+  paths:
+    - frontend/node_modules/
+    - frontend/.npm/
 
-build-job:
+stages:
+  - setup
+  - test
+  - build
+
+# Install dependencies
+setup:
+  stage: setup
   script:
     - cd frontend
     - npm install --legacy-peer-deps
-    - echo "Skipping tests during early development"
+  artifacts:
+    paths:
+      - frontend/node_modules/
+    expire_in: 1 hour
+
+# Run tests
+test:
+  stage: test
+  script:
+    - cd frontend
+    - npm run test
+  dependencies:
+    - setup
+  allow_failure: true  # Don't block pipeline if tests fail during development
+
+# Build the app
+build:
+  stage: build
+  script:
+    - cd frontend
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1 week
+  dependencies:
+    - setup
+  only:
+    - main
+    - develop
