@@ -3,8 +3,22 @@ name: "CodeQL"
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.jsx'
+      - '**/*.tsx'
+      - '**/package.json'
+      - '**/package-lock.json'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.jsx'
+      - '**/*.tsx'
+      - '**/package.json'
+      - '**/package-lock.json'
   schedule:
     - cron: '30 1 * * 0'
 

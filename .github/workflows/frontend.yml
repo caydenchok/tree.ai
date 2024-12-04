@@ -4,11 +4,21 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'frontend/**'
+      - 'frontend/**/*.js'
+      - 'frontend/**/*.ts'
+      - 'frontend/**/*.jsx'
+      - 'frontend/**/*.tsx'
+      - 'frontend/**/package.json'
+      - 'frontend/**/package-lock.json'
   pull_request:
     branches: [ main ]
     paths:
-      - 'frontend/**'
+      - 'frontend/**/*.js'
+      - 'frontend/**/*.ts'
+      - 'frontend/**/*.jsx'
+      - 'frontend/**/*.tsx'
+      - 'frontend/**/package.json'
+      - 'frontend/**/package-lock.json'
 
 jobs:
   frontend-pipeline:
