@@ -59,7 +59,7 @@ import {
 } from 'react-icons/fi';
 import { FaBrain, FaLightbulb, FaMagic } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import TeacherSidebar from '../../components/layout/TeacherSidebar';
+import TeacherSidebar from '../components/layout/TeacherSidebar';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from '@chakra-ui/react';
 import AITeachingAssistant from '../components/AITeachingAssistant';
