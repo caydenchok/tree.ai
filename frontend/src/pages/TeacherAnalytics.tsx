@@ -25,7 +25,7 @@ import {
   FaChartArea,
 } from 'react-icons/fa';
 import { IconType } from 'react-icons';
-import TeacherSidebar from '../../components/layout/TeacherSidebar';
+import TeacherSidebar from '../components/layout/TeacherSidebar';
 
 interface AnalyticsStat {
   label: string;
