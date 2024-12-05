@@ -21,7 +21,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { FaPaperPlane, FaSearch, FaEllipsisV, FaCircle } from 'react-icons/fa';
-import TeacherSidebar from '../components/layout/TeacherSidebar/TeacherSidebar';
+import TeacherSidebar from '../components/layout/TeacherSidebar';
 
 interface Message {
   id: string;
