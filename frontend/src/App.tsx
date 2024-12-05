@@ -3,6 +3,7 @@ import { Box, Text } from '@chakra-ui/react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SidebarProvider } from './contexts/SidebarContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load pages
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
@@ -308,13 +309,15 @@ const LoadingFallback = () => (
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <SidebarProvider>
-        <React.Suspense fallback={<LoadingFallback />}>
-          <RouterProvider router={router} />
-        </React.Suspense>
-      </SidebarProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <SidebarProvider>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <RouterProvider router={router} />
+          </React.Suspense>
+        </SidebarProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 
