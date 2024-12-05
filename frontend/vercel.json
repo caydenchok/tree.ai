@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
+  "buildCommand": "chmod +x vercel-build.sh && ./vercel-build.sh",
   "installCommand": "cd frontend && npm install --legacy-peer-deps",
   "outputDirectory": "frontend/dist",
-  "framework": "vite",
   "rewrites": [{ 
     "source": "/(.*)", 
     "destination": "/" 
