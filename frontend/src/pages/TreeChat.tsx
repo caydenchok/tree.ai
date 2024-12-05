@@ -150,13 +150,15 @@ const TreeChat: React.FC = () => {
     glowShadow: '0 4px 20px rgba(130, 205, 71, 0.3)',
   };
 
-  const scrollToBottom = () => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
   const formatTimeRemaining = (endTime: Date) => {
     const now = new Date();
@@ -279,7 +281,6 @@ const TreeChat: React.FC = () => {
     return "✨ Ask me anything... I know everything";
   };
 
-  const messagesEndRef = useRef(null);
   const toast = useToast();
   const { isOpen, onOpen: handleOpen, onClose } = useDisclosure();
 
@@ -824,7 +825,12 @@ const TreeChat: React.FC = () => {
           </ModalContent>
         </Modal>
 
-        <Container maxW="container.xl" h="100vh" px={6}>
+        <Container 
+          maxW={{ base: "100%", md: "container.xl" }} 
+          h="100vh" 
+          pt={{ base: "60px", md: "80px" }}
+          px={{ base: 2, md: 4 }}
+        >
           <Flex direction="column" h="100%" py={2}>
             <VStack spacing={4} flex="1" w="100%" position="relative">
               {/* Glassy Background Card */}
@@ -915,8 +921,11 @@ const TreeChat: React.FC = () => {
                           variant="ghost"
                           size="sm"
                           color="#CDF683"
-                          _hover={{ bg: "rgba(205, 246, 131, 0.1)" }}
-                          transition="all 0.2s"
+                          _hover={{
+                            bg: "rgba(205, 246, 131, 0.1)",
+                            transform: "translateX(-5px)"
+                          }}
+                          transition="all 0.3s"
                           position="relative"
                           pl={4}
                           pr={6}
@@ -1096,7 +1105,20 @@ const TreeChat: React.FC = () => {
                     </SimpleGrid>
                   </VStack>
                 ) : (
-                  <VStack spacing={4} w="100%" flex={1} overflowY="auto">
+                  <VStack spacing={4} w="100%" flex={1} overflowY="auto" pb={{ base: "80px", md: "100px" }}
+                    css={{
+                      '&::-webkit-scrollbar': {
+                        width: '4px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: 'rgba(0, 0, 0, 0.1)',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(205, 246, 131, 0.5)',
+                        borderRadius: '4px',
+                      },
+                    }}
+                  >
                     {/* Creative Back Button */}
                     <Box w="100%" mb={2}>
                       <Button
@@ -1204,80 +1226,65 @@ const TreeChat: React.FC = () => {
                         />
                       </Box>
                     )}
+                    <div ref={messagesEndRef} />
                   </VStack>
                 )}
               </Flex>
             </VStack>
 
             {/* Floating Input Card */}
-            <Box
-              position="fixed"
-              bottom={6}
-              left={6}
-              right={6}
-              maxW="container.xl"
-              mx="auto"
-              bg="rgba(0, 0, 0, 0.3)"
-              borderRadius="lg"
-              p={4}
-              borderWidth="1px"
+            <Box 
+              position="fixed" 
+              bottom={0} 
+              left={0} 
+              right={0} 
+              p={{ base: 2, md: 4 }}
+              bg="rgba(13, 17, 14, 0.95)"
+              borderTop="1px"
               borderColor="whiteAlpha.200"
               backdropFilter="blur(10px)"
-              boxShadow="dark-lg"
-              zIndex={2}
             >
-              <Flex>
-                <InputGroup size="lg" flex={1}>
+              <Container maxW={{ base: "100%", md: "container.xl" }}>
+                <InputGroup size="lg">
                   <Input
+                    pr="4.5rem"
                     placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}
-                    bg="whiteAlpha.100"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    bg="whiteAlpha.50"
                     border="1px solid"
                     borderColor="whiteAlpha.200"
-                    color="white"
-                    _hover={{ borderColor: "#CDF683" }}
+                    _hover={{ borderColor: "whiteAlpha.300" }}
                     _focus={{ 
                       borderColor: "#CDF683",
                       boxShadow: "0 0 0 1px #CDF683"
                     }}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    isDisabled={isRateLimited || isLoading}
+                    disabled={isLoading || isRateLimited}
+                    _disabled={{
+                      opacity: 0.7,
+                      cursor: "not-allowed"
+                    }}
                   />
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      h="1.75rem"
+                      size="sm"
+                      onClick={handleSendMessage}
+                      isLoading={isLoading}
+                      disabled={!inputValue.trim() || isRateLimited}
+                      bg={inputValue.trim() ? "#CDF683" : "whiteAlpha.200"}
+                      color={inputValue.trim() ? "black" : "whiteAlpha.600"}
+                      _hover={{
+                        bg: inputValue.trim() ? "#b5e853" : "whiteAlpha.300"
+                      }}
+                      leftIcon={<Icon as={BsSend} />}
+                    >
+                      Send
+                    </Button>
+                  </InputRightElement>
                 </InputGroup>
-                
-                {/* Action Buttons */}
-                <HStack spacing={2} ml={4}>
-                  <IconButton
-                    aria-label="Upload file"
-                    icon={<FaFileUpload />}
-                    variant="ghost"
-                    colorScheme="whiteAlpha"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                    onClick={() => {/* Handle file upload */}}
-                  />
-                  <IconButton
-                    aria-label="Take photo"
-                    icon={<FaCamera />}
-                    variant="ghost"
-                    colorScheme="whiteAlpha"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                    onClick={() => {/* Handle camera */}}
-                  />
-                  <IconButton
-                    aria-label="Send message"
-                    icon={<FaPaperPlane />}
-                    colorScheme="green"
-                    variant="solid"
-                    bg="#CDF683"
-                    color="black"
-                    _hover={{ bg: "#CDF683" }}
-                    onClick={handleSendMessage}
-                    isLoading={isLoading}
-                    isDisabled={!inputValue.trim() || isRateLimited}
-                  />
-                </HStack>
-              </Flex>
+              </Container>
             </Box>
           </Flex>
         </Container>

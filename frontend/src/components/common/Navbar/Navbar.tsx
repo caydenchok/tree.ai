@@ -95,10 +95,52 @@ const Navbar: React.FC = () => {
               Tree AI
             </Button>
 
-            {/* Language Selector */}
-            <LanguageSelector />
+            {/* Mobile menu button */}
+            {isMobile && (
+              <IconButton
+                aria-label="Open menu"
+                icon={<HiMenu />}
+                variant="ghost"
+                color="white"
+                _hover={{ bg: 'whiteAlpha.200' }}
+                onClick={onOpen}
+              />
+            )}
+          </HStack>
 
-            {/* Login/Register Buttons */}
+          {/* Mobile drawer */}
+          <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+            <DrawerOverlay />
+            <DrawerContent bg="gray.900">
+              <DrawerCloseButton color="white" />
+              <DrawerHeader borderBottomWidth="1px" borderColor="whiteAlpha.300" color="white">
+                Menu
+              </DrawerHeader>
+              <DrawerBody>
+                <VStack spacing={4} align="stretch" mt={4}>
+                  <Button
+                    onClick={() => {
+                      navigate('/tree-chat');
+                      onClose();
+                    }}
+                    leftIcon={<BsChat />}
+                    variant="ghost"
+                    color="white"
+                    _hover={{ bg: 'whiteAlpha.200' }}
+                    justifyContent="flex-start"
+                  >
+                    Tree AI Chat
+                  </Button>
+                </VStack>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
+
+          {/* Language Selector */}
+          {!isMobile && <LanguageSelector />}
+
+          {/* Login/Register Buttons */}
+          {!isMobile && (
             <Button
               variant="ghost"
               color="white"
@@ -108,17 +150,7 @@ const Navbar: React.FC = () => {
             >
               Login
             </Button>
-            <Button
-              variant="outline"
-              color="white"
-              borderColor="whiteAlpha.200"
-              _hover={{ bg: 'whiteAlpha.200' }}
-              size="sm"
-              onClick={() => navigate('/register')}
-            >
-              Register
-            </Button>
-          </HStack>
+          )}
         </Flex>
       </Container>
     </Box>
