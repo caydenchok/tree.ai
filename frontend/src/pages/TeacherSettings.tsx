@@ -30,7 +30,7 @@ import {
   FaUpload,
   FaCheck,
 } from 'react-icons/fa';
-import TeacherSidebar from '../components/TeacherSidebar';
+import TeacherSidebar from '../components/layout/TeacherSidebar';
 
 interface Settings {
   notifications: {
