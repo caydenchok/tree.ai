@@ -1,4 +1,4 @@
-import { Box, VStack, Text, Button, IconButton, Icon, HStack, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast, Tooltip, Container, Flex, Input, Avatar, Menu, MenuButton, MenuList, MenuItem, Divider, SimpleGrid, Card, CardBody, Badge, Heading, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { Box, VStack, Text, Button, IconButton, Icon, HStack, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast, Tooltip, Container, Flex, Input, Avatar, Menu, MenuButton, MenuList, MenuItem, Divider, SimpleGrid, Card, CardBody, Badge, Heading, InputGroup, InputRightElement, Tabs, TabList, TabPanels, TabPanel, Tab, useBreakpointValue } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BsTrash, BsStars, BsSend, BsThreeDotsVertical, BsCopy, BsDownload, BsClock, BsChat, BsFileText, BsTable, BsPeople, BsX, BsArrowLeft, BsBookmark, BsBookmarkFill } from 'react-icons/bs';
 import { IoRefreshOutline } from 'react-icons/io5';
@@ -826,10 +826,10 @@ const TreeChat: React.FC = () => {
         </Modal>
 
         <Container 
-          maxW={{ base: "100%", md: "container.xl" }} 
+          maxW="container.xl" 
           h="100vh" 
           pt={{ base: "60px", md: "80px" }}
-          px={{ base: 2, md: 4 }}
+          px={6}
         >
           <Flex direction="column" h="100%" py={2}>
             <VStack spacing={4} flex="1" w="100%" position="relative">
@@ -859,7 +859,7 @@ const TreeChat: React.FC = () => {
                 w="100%"
               >
                 {showWelcome ? (
-                  <VStack spacing={6} align="center" w="100%" h="100%" overflowY="auto">
+                  <VStack spacing={8} w="100%" pt={4}>
                     {/* Badge and Greeting */}
                     <VStack spacing={4} align="center" w="100%">
                       <Badge
@@ -1232,59 +1232,280 @@ const TreeChat: React.FC = () => {
               </Flex>
             </VStack>
 
-            {/* Floating Input Card */}
-            <Box 
-              position="fixed" 
-              bottom={0} 
-              left={0} 
-              right={0} 
-              p={{ base: 2, md: 4 }}
-              bg="rgba(13, 17, 14, 0.95)"
-              borderTop="1px"
-              borderColor="whiteAlpha.200"
-              backdropFilter="blur(10px)"
-            >
-              <Container maxW={{ base: "100%", md: "container.xl" }}>
-                <InputGroup size="lg">
-                  <Input
-                    pr="4.5rem"
-                    placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    bg="whiteAlpha.50"
-                    border="1px solid"
-                    borderColor="whiteAlpha.200"
-                    _hover={{ borderColor: "whiteAlpha.300" }}
-                    _focus={{ 
-                      borderColor: "#CDF683",
-                      boxShadow: "0 0 0 1px #CDF683"
+            {/* Desktop Cards Grid */}
+            <Box display={{ base: "none", md: "block" }} w="100%">
+              <SimpleGrid 
+                columns={2}
+                spacing={6}
+                w="100%"
+              >
+                {/* Saved Messages Card */}
+                <Card
+                  bg="whiteAlpha.50"
+                  borderColor="whiteAlpha.200"
+                  borderWidth={1}
+                  _hover={{ 
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+                  }}
+                  transition="all 0.2s"
+                  w="100%"
+                >
+                  <CardBody>
+                    <VStack align="start" spacing={4}>
+                      <HStack justify="space-between" width="100%">
+                        <HStack color="#CDF683">
+                          <Icon as={BsBookmark} />
+                          <Text fontWeight="bold">Saved Messages</Text>
+                        </HStack>
+                        <Button
+                          onClick={onAllSavedOpen}
+                          variant="ghost"
+                          size="sm"
+                          color="#CDF683"
+                          _hover={{
+                            bg: "rgba(205, 246, 131, 0.1)"
+                          }}
+                          transition="all 0.2s"
+                          position="relative"
+                          pl={4}
+                          pr={6}
+                          borderRadius="full"
+                          bgGradient="linear(to-r, rgba(205, 246, 131, 0.1), transparent)"
+                        >
+                          View All
+                        </Button>
+                      </HStack>
+                      <VStack align="stretch" spacing={3} w="100%">
+                        {savedMessages.slice(0, 3).map((msg) => (
+                          <Box
+                            key={msg.id}
+                            p={3}
+                            bg="whiteAlpha.50"
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor="whiteAlpha.100"
+                            _hover={{
+                              bg: "whiteAlpha.100",
+                              borderColor: "#CDF683"
+                            }}
+                            transition="all 0.2s"
+                            cursor="pointer"
+                            onClick={() => {
+                              setSelectedMessage(msg.content);
+                              onSavedMessageOpen();
+                            }}
+                          >
+                            <VStack align="start" spacing={1}>
+                              <HStack justify="space-between" width="100%">
+                                <Text fontSize="sm" fontWeight="bold" color="white">
+                                  {msg.topic}
+                                </Text>
+                                <Text fontSize="xs" color="whiteAlpha.600">
+                                  {msg.timestamp}
+                                </Text>
+                              </HStack>
+                              <Text fontSize="sm" color="whiteAlpha.800" noOfLines={2}>
+                                {msg.content}
+                              </Text>
+                            </VStack>
+                          </Box>
+                        ))}
+                      </VStack>
+                    </VStack>
+                  </CardBody>
+                </Card>
+
+                {/* Recent Topics Card */}
+                <Card
+                  bg="whiteAlpha.50"
+                  borderColor="whiteAlpha.200"
+                  borderWidth={1}
+                  _hover={{ 
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+                  }}
+                  transition="all 0.2s"
+                  w="100%"
+                >
+                  <CardBody>
+                    <VStack align="start" spacing={4}>
+                      <HStack color="#CDF683">
+                        <Icon as={BsClock} />
+                        <Text fontWeight="bold">Popular Topics</Text>
+                      </HStack>
+                      <VStack align="stretch" spacing={2} w="100%">
+                        {popularTopics.map((topic, index) => (
+                          <Box
+                            key={index}
+                            bg="whiteAlpha.50"
+                            borderRadius="lg"
+                            borderWidth="1px"
+                            borderColor="whiteAlpha.100"
+                            transition="all 0.2s"
+                            _hover={{
+                              bg: "whiteAlpha.100",
+                              borderColor: "whiteAlpha.200",
+                              transform: "translateX(4px)"
+                            }}
+                            cursor="pointer"
+                            onClick={() => setInputValue(`Tell me about ${topic.title}`)}
+                          >
+                            <HStack spacing={3} p={3}>
+                              <Icon 
+                                as={topic.icon} 
+                                color="whiteAlpha.700" 
+                                boxSize={4}
+                              />
+                              <Text 
+                                fontSize="sm" 
+                                color="white"
+                                fontWeight="medium"
+                              >
+                                {topic.title}
+                              </Text>
+                            </HStack>
+                          </Box>
+                        ))}
+                      </VStack>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              </SimpleGrid>
+            </Box>
+
+            {/* Mobile Tabs */}
+            <Box display={{ base: "block", md: "none" }} w="100%">
+              <Tabs variant="soft-rounded" colorScheme="green" w="100%">
+                <TabList mb={4} gap={2}>
+                  <Tab 
+                    _selected={{ 
+                      color: "black",
+                      bg: "#CDF683"
                     }}
-                    disabled={isLoading || isRateLimited}
-                    _disabled={{
-                      opacity: 0.7,
-                      cursor: "not-allowed"
+                    color="white"
+                    _hover={{ bg: "whiteAlpha.200" }}
+                  >
+                    Recent Chats
+                  </Tab>
+                  <Tab 
+                    _selected={{ 
+                      color: "black",
+                      bg: "#CDF683"
                     }}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      h="1.75rem"
-                      size="sm"
-                      onClick={handleSendMessage}
-                      isLoading={isLoading}
-                      disabled={!inputValue.trim() || isRateLimited}
-                      bg={inputValue.trim() ? "#CDF683" : "whiteAlpha.200"}
-                      color={inputValue.trim() ? "black" : "whiteAlpha.600"}
-                      _hover={{
-                        bg: inputValue.trim() ? "#b5e853" : "whiteAlpha.300"
-                      }}
-                      leftIcon={<Icon as={BsSend} />}
+                    color="white"
+                    _hover={{ bg: "whiteAlpha.200" }}
+                  >
+                    Popular Topics
+                  </Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel p={0}>
+                    <Card
+                      bg="whiteAlpha.50"
+                      borderColor="whiteAlpha.200"
+                      borderWidth={1}
+                      w="100%"
                     >
-                      Send
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </Container>
+                      <CardBody>
+                        <VStack align="start" spacing={4}>
+                          <HStack color="#CDF683">
+                            <Icon as={BsBookmark} />
+                            <Text fontWeight="bold">Recent Chats</Text>
+                          </HStack>
+                          <VStack align="stretch" spacing={3} w="100%">
+                            {savedMessages.slice(0, 3).map((msg) => (
+                              <Box
+                                key={msg.id}
+                                p={3}
+                                bg="whiteAlpha.50"
+                                borderRadius="md"
+                                borderWidth="1px"
+                                borderColor="whiteAlpha.100"
+                                _hover={{
+                                  bg: "whiteAlpha.100",
+                                  borderColor: "#CDF683"
+                                }}
+                                transition="all 0.2s"
+                                cursor="pointer"
+                                onClick={() => {
+                                  setSelectedMessage(msg.content);
+                                  onSavedMessageOpen();
+                                }}
+                              >
+                                <VStack align="start" spacing={1}>
+                                  <HStack justify="space-between" width="100%">
+                                    <Text fontSize="sm" fontWeight="bold" color="white">
+                                      {msg.topic}
+                                    </Text>
+                                    <Text fontSize="xs" color="whiteAlpha.600">
+                                      {msg.timestamp}
+                                    </Text>
+                                  </HStack>
+                                  <Text fontSize="sm" color="whiteAlpha.800" noOfLines={2}>
+                                    {msg.content}
+                                  </Text>
+                                </VStack>
+                              </Box>
+                            ))}
+                          </VStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  </TabPanel>
+                  <TabPanel p={0}>
+                    <Card
+                      bg="whiteAlpha.50"
+                      borderColor="whiteAlpha.200"
+                      borderWidth={1}
+                      w="100%"
+                    >
+                      <CardBody>
+                        <VStack align="start" spacing={4}>
+                          <HStack color="#CDF683">
+                            <Icon as={BsClock} />
+                            <Text fontWeight="bold">Popular Topics</Text>
+                          </HStack>
+                          <VStack align="stretch" spacing={2} w="100%">
+                            {popularTopics.map((topic, index) => (
+                              <Box
+                                key={index}
+                                bg="whiteAlpha.50"
+                                borderRadius="lg"
+                                borderWidth="1px"
+                                borderColor="whiteAlpha.100"
+                                transition="all 0.2s"
+                                _hover={{
+                                  bg: "whiteAlpha.100",
+                                  borderColor: "whiteAlpha.200",
+                                  transform: "translateX(4px)"
+                                }}
+                                cursor="pointer"
+                                onClick={() => setInputValue(`Tell me about ${topic.title}`)}
+                              >
+                                <HStack spacing={3} p={3}>
+                                  <Icon 
+                                    as={topic.icon} 
+                                    color="whiteAlpha.700" 
+                                    boxSize={4}
+                                  />
+                                  <Text 
+                                    fontSize="sm" 
+                                    color="white"
+                                    fontWeight="medium"
+                                  >
+                                    {topic.title}
+                                  </Text>
+                                </HStack>
+                              </Box>
+                            ))}
+                          </VStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
             </Box>
           </Flex>
         </Container>
