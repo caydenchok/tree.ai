@@ -47,6 +47,9 @@ const Navbar: React.FC = () => {
     <Box 
       as="nav" 
       position="fixed" 
+      top={0}
+      left={0}
+      right={0}
       w="100%" 
       zIndex={1000}
       bg="rgba(13, 17, 14, 0.92)"
@@ -54,6 +57,9 @@ const Navbar: React.FC = () => {
       borderBottom="1px"
       borderColor="rgba(205, 246, 131, 0.2)"
       boxShadow="0 0 20px rgba(205, 246, 131, 0.05)"
+      px={4}
+      py={2}
+      safeAreaInset="top"
     >
       <Container maxW="8xl">
         <Flex h={16} alignItems="center" justifyContent="space-between">
