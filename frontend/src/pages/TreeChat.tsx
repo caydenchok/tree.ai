@@ -7,6 +7,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import TechTreeBackground from '../components/common/TechTreeBackground/TechTreeBackground';
 import { keyframes } from '@emotion/react';
 import { FaUser, FaRobot, FaFileUpload, FaCamera, FaPaperPlane, FaCrown } from 'react-icons/fa';
+import chatService, { Message } from '../services/chatService';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -67,7 +68,7 @@ const TypingIndicator = () => (
 );
 
 const TreeChat: React.FC = () => {
-  const [messages, setMessages] = useState<Array<{ role: string; content: string; id?: number }>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isRateLimited, setIsRateLimited] = useState(false);
@@ -221,48 +222,33 @@ const TreeChat: React.FC = () => {
     return () => clearInterval(timer);
   }, [rateLimitEndTime]);
 
-  const handleSendMessage = async (message: string) => {
-    if (!message.trim() || isLoading || isRateLimited) return;
-
-    setShowWelcome(false); // Show chat view when sending message
-    setInputValue('');
-    setIsLoading(true);
-
-    // Add user message
-    const userMessage = { role: 'user', content: message };
-    setMessages(prev => [...prev, userMessage]);
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading || isRateLimited) return;
 
     try {
-      // Simulate AI response (replace with actual API call)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(true);
+      setShowWelcome(false);
       
-      // Add AI response
-      const aiMessage = { role: 'assistant', content: 'This is a sample response from Tree AI.' };
-      setMessages(prev => [...prev, aiMessage]);
-      
+      // Add user message immediately
+      const userMessage: Message = {
+        role: 'user',
+        content: inputValue.trim()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      setInputValue('');
+
+      // Get response from API
+      const response = await chatService.sendMessage(userMessage.content);
+      setMessages(prev => [...prev, response]);
     } catch (error) {
-      if (error instanceof Error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-      
-      // Handle rate limiting
-      if (error instanceof Error && error.message.includes('rate limit')) {
-        setIsRateLimited(true);
-        const endTime = new Date();
-        endTime.setMinutes(endTime.getMinutes() + 1);
-        setRateLimitEndTime(endTime);
-        
-        setTimeout(() => {
-          setIsRateLimited(false);
-          setRateLimitEndTime(null);
-        }, 60000);
-      }
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send message",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -271,7 +257,7 @@ const TreeChat: React.FC = () => {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage(inputValue);
+      handleSendMessage();
     }
   };
 
@@ -374,6 +360,29 @@ const TreeChat: React.FC = () => {
 
   // Add state for all saved messages modal
   const { isOpen: isAllSavedOpen, onOpen: onAllSavedOpen, onClose: onAllSavedClose } = useDisclosure();
+
+  // Load chat history when component mounts
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      try {
+        const history = await chatService.getConversationHistory();
+        if (history.length > 0) {
+          setMessages(history);
+          setShowWelcome(false);
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to load chat history",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top"
+        });
+      }
+    };
+    loadChatHistory();
+  }, [toast]);
 
   return (
     <Box
@@ -1263,7 +1272,7 @@ const TreeChat: React.FC = () => {
                     bg="#CDF683"
                     color="black"
                     _hover={{ bg: "#CDF683" }}
-                    onClick={() => handleSendMessage(inputValue)}
+                    onClick={handleSendMessage}
                     isLoading={isLoading}
                     isDisabled={!inputValue.trim() || isRateLimited}
                   />
