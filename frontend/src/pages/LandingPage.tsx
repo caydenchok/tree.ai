@@ -112,7 +112,6 @@ const TestimonialCard = ({ name, role, image, content, rating, subject }: {
         transform: 'translateY(0)',
       }
     }}
-    transition="all 0.3s ease"
   >
     {/* Top Gradient Line */}
     <Box
