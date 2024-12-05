@@ -77,6 +77,7 @@ import { MdLocationOn, MdEmail, MdPhone, MdArrowForward } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/common/Navbar/Navbar';
+import ParticlesBackground from '../components/common/ParticlesBackground';
 import TechTreeBackground from '../components/common/TechTreeBackground/TechTreeBackground';
 
 const MotionBox = motion(Box);
@@ -751,6 +752,7 @@ const LandingPage = () => {
       transition={{ duration: 0.5 }}
       position="relative"
     >
+      <ParticlesBackground />
       <Box position="fixed" top={0} left={0} right={0} bottom={0} zIndex={0}>
         <TechTreeBackground />
       </Box>
