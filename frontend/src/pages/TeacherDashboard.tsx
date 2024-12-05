@@ -66,7 +66,7 @@ import { logout } from '../store/slices/authSlice';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import LanguageSelector from '../components/LanguageSelector';
-import TeacherSidebar from './TeacherSidebar';
+import TeacherSidebar from '../components/layout/TeacherSidebar';
 import AITeachingAssistant from '../components/AITeachingAssistant';
 
 interface User {
