@@ -25,7 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaBook, FaCalendarAlt, FaClock, FaUsers } from 'react-icons/fa';
-import TeacherSidebar from '../components/layout/TeacherSidebar';
+import TeacherSidebar from '../../components/layout/TeacherSidebar';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';

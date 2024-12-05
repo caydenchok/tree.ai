@@ -1,2 +1,3 @@
 // Move content from existing TeacherSidebar.tsx here
-export { default as TeacherSidebar } from './TeacherSidebar';
+import TeacherSidebar from './TeacherSidebar';
+export default TeacherSidebar;
