@@ -103,7 +103,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { CardProps, BoxProps, FlexProps } from '@chakra-ui/react';
 import { chakra, keyframes } from "@emotion/react";
 import styled from '@emotion/styled';
-import TeacherSidebar from '../components/TeacherSidebar';
+import TeacherSidebar from '../components/layout/TeacherSidebar';
 
 type Merge<P, T> = Omit<P, keyof T> & T;
 type MotionCardProps = Merge<CardProps, HTMLMotionProps<'div'>>;
