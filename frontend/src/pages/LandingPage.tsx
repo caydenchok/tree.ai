@@ -1077,7 +1077,6 @@ const LandingPage = () => {
                         borderColor: 'brand.primary',
                         boxShadow: '0 4px 12px rgba(205, 246, 131, 0.1)'
                       }}
-                      transition="all 0.2s"
                     >
                       <VStack align="start" spacing={3}>
                         <Icon 

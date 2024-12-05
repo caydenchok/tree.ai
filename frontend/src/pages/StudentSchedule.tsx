@@ -215,12 +215,8 @@ const StudentSchedule: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      position="relative"
-      minH="100vh"
-      w="full"
       bg={bgGradient}
       color={textColor}
-      position="relative"
       overflow="hidden"
     >
       {/* Background Pattern */}
@@ -238,7 +234,6 @@ const StudentSchedule: React.FC = () => {
 
       {/* Main Content */}
       <Box
-        position="relative"
         zIndex={1}
         h="100vh"
       >
@@ -248,9 +243,9 @@ const StudentSchedule: React.FC = () => {
             flex="1"
             ml={isCollapsed ? "60px" : "240px"}
             transition="all 0.3s"
-            w={`calc(100% - ${isCollapsed ? "60px" : "240px"})`}
-            position="relative"
-            p={8}
+            bg={bgGradient}
+            color={textColor}
+            overflow="hidden"
           >
             {/* Header */}
             <Box {...headerStyle}>
