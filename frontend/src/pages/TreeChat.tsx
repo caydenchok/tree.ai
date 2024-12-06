@@ -612,7 +612,10 @@ const TreeChat: React.FC = () => {
                                 <Text fontWeight="bold">Recent Chats</Text>
                               </HStack>
                               <Button
-                                onClick={onRecentChatsOpen}
+                                onClick={() => {
+                                  onRecentChatsOpen();
+                                  setTimeout(scrollToBottom, 100);
+                                }}
                                 variant="ghost"
                                 size="sm"
                                 color="#CDF683"
@@ -888,6 +891,7 @@ const TreeChat: React.FC = () => {
                             boxShadow: "xl",
                           }}
                           transition="all 0.2s"
+                          ref={index === messages.length - 1 ? messagesEndRef : undefined}
                         >
                           <HStack spacing={4} align="start" width="100%">
                             <Avatar
@@ -939,30 +943,31 @@ const TreeChat: React.FC = () => {
                       ))}
                       <div ref={messagesEndRef} />
                     </VStack>
-                    {/* Floating button for mobile */}
-                    <IconButton
-                      aria-label="Scroll to bottom"
-                      icon={<BsArrowLeft style={{ transform: 'rotate(-90deg)' }} />}
-                      position="fixed"
-                      bottom={{ base: "100px", md: "120px" }}
-                      right={4}
-                      colorScheme="green"
-                      bg="#CDF683"
-                      color="black"
-                      rounded="full"
-                      size="lg"
-                      shadow="lg"
-                      zIndex={1000}
-                      onClick={scrollToBottom}
-                      display={{ base: 'flex', md: 'none' }}
-                      opacity={0.9}
-                      _hover={{
-                        transform: 'translateY(-2px)',
-                        opacity: 1
-                      }}
-                      transition="all 0.2s"
-                    />
                   </Box>
+
+                  {/* Floating button for mobile */}
+                  <IconButton
+                    aria-label="Scroll to bottom"
+                    icon={<BsArrowLeft style={{ transform: 'rotate(-90deg)' }} />}
+                    position="fixed"
+                    bottom={{ base: "80px", md: "120px" }}
+                    right={4}
+                    colorScheme="green"
+                    bg="#CDF683"
+                    color="black"
+                    rounded="full"
+                    size="lg"
+                    shadow="lg"
+                    zIndex={2000}
+                    onClick={scrollToBottom}
+                    display={{ base: 'flex', md: 'none' }}
+                    opacity={0.9}
+                    _hover={{
+                      transform: 'translateY(-2px)',
+                      opacity: 1
+                    }}
+                    transition="all 0.2s"
+                  />
                 </VStack>
               )}
             </VStack>
