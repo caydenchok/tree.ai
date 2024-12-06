@@ -578,8 +578,8 @@ const TreeChat: React.FC = () => {
               align="stretch" 
               w="100%"
               h={{ base: "100vh", md: "calc(100vh - 140px)" }}
-              justify={{ base: "center", md: "flex-start" }}
-              pt={{ base: 0, md: 2 }}
+              justify={{ base: "flex-start", md: "flex-start" }}
+              pt={{ base: "70px", md: 2 }}
             >
               {showWelcome ? (
                 <VStack spacing={2} flex="1" w="100%" position="relative">
@@ -616,7 +616,8 @@ const TreeChat: React.FC = () => {
                         align="center" 
                         w="100%"
                         minH={{ base: "calc(100vh - 200px)", md: "auto" }}
-                        justify={{ base: "center", md: "flex-start" }}
+                        justify={{ base: "flex-start", md: "flex-start" }}
+                        pt={{ base: 4, md: 0 }}
                       >
                         <Badge
                           colorScheme="green"
