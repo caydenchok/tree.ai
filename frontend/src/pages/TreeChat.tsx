@@ -794,28 +794,45 @@ const TreeChat: React.FC = () => {
               ) : (
                 // Chat screen content
                 <VStack spacing={2} flex="1" w="100%" position="relative">
-                  {/* Back button */}
-                  <HStack w="100%" justify="space-between" mb={4}>
-                    <IconButton
-                      aria-label="Back to welcome"
-                      icon={<BsArrowLeft />}
-                      onClick={handleBackToHome}
-                      variant="ghost"
-                      color="#CDF683"
-                      _hover={{
-                        bg: "rgba(205, 246, 131, 0.1)",
-                        transform: "translateX(-5px)"
-                      }}
-                      transition="all 0.2s"
-                    />
-                  </HStack>
+                  {/* Back button - fixed position */}
+                  <Box
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    right={0}
+                    py={2}
+                    px={{ base: 4, md: 6 }}
+                    bg="rgba(0, 0, 0, 0.8)"
+                    backdropFilter="blur(10px)"
+                    borderBottom="1px solid"
+                    borderColor="whiteAlpha.100"
+                    zIndex={1000}
+                  >
+                    <Container maxW="container.xl">
+                      <IconButton
+                        aria-label="Back to welcome"
+                        icon={<BsArrowLeft />}
+                        onClick={handleBackToHome}
+                        variant="ghost"
+                        color="#CDF683"
+                        _hover={{
+                          bg: "rgba(205, 246, 131, 0.1)",
+                          transform: "translateX(-5px)"
+                        }}
+                        transition="all 0.2s"
+                      />
+                    </Container>
+                  </Box>
+
                   {/* Chat messages container */}
                   <Box
                     flex="1"
                     w="100%"
                     overflowY="auto"
                     position="relative"
+                    mt="60px"
                     pb={{ base: "140px", md: "120px" }}
+                    maxH="calc(100vh - 60px)"
                     css={{
                       '&::-webkit-scrollbar': {
                         width: '4px',
@@ -831,6 +848,7 @@ const TreeChat: React.FC = () => {
                       scrollbarWidth: 'thin',
                       scrollbarColor: 'rgba(255,255,255,0.2) rgba(0,0,0,0.1)',
                       WebkitOverflowScrolling: 'touch',
+                      '-webkit-transform': 'translateZ(0)',
                     }}
                   >
                     {/* Messages */}
@@ -932,7 +950,7 @@ const TreeChat: React.FC = () => {
                 WebkitBackfaceVisibility: 'hidden',
                 backfaceVisibility: 'hidden',
                 ...(window.innerWidth <= 768 && {
-                  paddingBottom: 'env(safe-area-inset-bottom)'
+                  paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)'
                 })
               }}
             >
