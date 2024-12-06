@@ -1054,18 +1054,34 @@ const TreeChat: React.FC = () => {
               right={0}
               py={4}
               px={{ base: 4, md: 6 }}
-              bg="transparent"
+              bg="rgba(0, 0, 0, 0.8)"
               backdropFilter="blur(10px)"
               borderTop="1px solid"
               borderColor="whiteAlpha.100"
+              transform="translateZ(0)"
               style={{
-                position: '-webkit-sticky',
-                WebkitTransform: 'translate3d(0,0,0)',
-                zIndex: 1000
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1000,
+                marginBottom: 0
               }}
             >
-              <Container maxW="container.xl">
-                <Flex align="center">
+              <Container 
+                maxW="container.xl" 
+                style={{
+                  paddingBottom: 'env(safe-area-inset-bottom)',
+                  paddingBottom: 'constant(safe-area-inset-bottom)'
+                }}
+              >
+                <Flex 
+                  align="center"
+                  style={{
+                    transform: 'translateZ(0)',
+                    WebkitTransform: 'translateZ(0)'
+                  }}
+                >
                   <InputGroup size="lg" flex={1}>
                     <Input
                       ref={inputRef}
@@ -1088,7 +1104,9 @@ const TreeChat: React.FC = () => {
                       _placeholder={{ color: "whiteAlpha.500" }}
                       style={{
                         WebkitAppearance: 'none',
-                        fontSize: '16px'
+                        fontSize: '16px',
+                        transform: 'translateZ(0)',
+                        WebkitTransform: 'translateZ(0)'
                       }}
                     />
                   </InputGroup>
@@ -1237,6 +1255,9 @@ const TreeChat: React.FC = () => {
           </HStack>
         )}
       </Button>
+
+      {/* Add padding at the bottom to prevent content from being hidden behind input */}
+      <Box pb={{ base: "80px", md: "100px" }} />
     </Box>
   );
 };
