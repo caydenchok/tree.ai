@@ -220,6 +220,8 @@ const TreeChat: React.FC = () => {
     return () => clearInterval(timer);
   }, [rateLimitEndTime]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading || isRateLimited) return;
 
@@ -234,6 +236,9 @@ const TreeChat: React.FC = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       setInputValue('');
+      
+      // Blur input to dismiss keyboard on mobile
+      inputRef.current?.blur();
 
       // Get response from API
       const response = await chatService.sendMessage(userMessage.content);
@@ -1063,6 +1068,7 @@ const TreeChat: React.FC = () => {
                 <Flex align="center">
                   <InputGroup size="lg" flex={1}>
                     <Input
+                      ref={inputRef}
                       placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
