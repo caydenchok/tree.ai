@@ -1,6 +1,6 @@
 import { Box, VStack, Text, Button, IconButton, Icon, HStack, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast, Tooltip, Container, Flex, Input, Avatar, Menu, MenuButton, MenuList, MenuItem, Divider, SimpleGrid, Card, CardBody, Badge, Heading, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BsTrash, BsStars, BsSend, BsThreeDotsVertical, BsCopy, BsDownload, BsClock, BsX, BsFileText, BsTable, BsPeople, BsArrowLeft, BsBookmark, BsBookmarkFill } from 'react-icons/bs';
+import { BsTrash, BsStars, BsSend, BsThreeDotsVertical, BsCopy, BsDownload, BsClock, BsX, BsFileText, BsTable, BsPeople, BsArrowLeft, BsBookmark, BsBookmarkFill, BsUpload, BsCamera } from 'react-icons/bs';
 import { IoRefreshOutline } from 'react-icons/io5';
 import { FiClock, FiTrash2 } from 'react-icons/fi';
 import { useRef, useState, useEffect, useCallback } from 'react';
@@ -90,7 +90,7 @@ const TreeChat: React.FC = () => {
     }
   }, []);
 
-  const recentChats = [
+  const [recentChats, setRecentChats] = useState([
     {
       id: 1,
       title: "Python Programming ",
@@ -109,7 +109,7 @@ const TreeChat: React.FC = () => {
       preview: "SQL query optimization tips...",
       timestamp: "1 day ago"
     }
-  ];
+  ]);
 
   const quickActions = [
     { title: 'Summarize study notes', icon: BsFileText },
@@ -160,50 +160,33 @@ const TreeChat: React.FC = () => {
   };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [showMobileOverlay, setShowMobileOverlay] = useState(false);
+
+  const handleScroll = () => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isNearBottom);
+    }
+  };
 
   useEffect(() => {
-    // Set initial viewport height
-    const setVH = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    // Set initial height
-    setVH();
-
-    // Update on resize and orientation change
-    window.addEventListener('resize', setVH);
-    window.addEventListener('orientationchange', setVH);
-
-    return () => {
-      window.removeEventListener('resize', setVH);
-      window.removeEventListener('orientationchange', setVH);
-    };
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.addEventListener('scroll', handleScroll);
+      return () => chatContainer.removeEventListener('scroll', handleScroll);
+    }
   }, []);
 
   const scrollToBottom = useCallback(() => {
-    if (messagesEndRef.current) {
-      const scrollOptions = {
-        behavior: 'smooth' as ScrollBehavior,
-        block: 'end',
-      };
-      
-      // Use a slightly longer delay to ensure content is rendered
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView(scrollOptions);
-      }, 150);
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, scrollToBottom]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      scrollToBottom();
-    }
-  }, [isLoading, scrollToBottom]);
+  }, [messages]);
 
   const formatTimeRemaining = (endTime: Date) => {
     const now = new Date();
@@ -428,6 +411,30 @@ const TreeChat: React.FC = () => {
     loadChatHistory();
   }, [toast]);
 
+  const handleDeleteRecentChat = (chatId: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the chat selection
+    setRecentChats(prev => prev.filter(chat => chat.id !== chatId));
+    toast({
+      title: "Chat Deleted",
+      description: "The chat has been removed from your history",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
+  const handleDeleteSavedMessage = (messageId: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the message modal
+    setSavedMessages(prev => prev.filter(msg => msg.id !== messageId));
+    toast({
+      title: "Message Deleted",
+      description: "The message has been removed from your saved items",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
   const WelcomeContent = () => (
     <Box textAlign="center" mb={2}>
       <Badge
@@ -478,8 +485,74 @@ const TreeChat: React.FC = () => {
           {getLateNightMessage()}
         </Text>
       </Flex>
+
+      {/* Popular Topics Card - Mobile Only */}
+      <Box display={{ base: 'block', md: 'none' }} w="100%" px={4} mt={2}>
+        <Card
+          bg="whiteAlpha.50"
+          borderColor="whiteAlpha.200"
+          borderWidth={1}
+          _hover={{ 
+            transform: "translateY(-2px)",
+            boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+          }}
+          transition="all 0.2s"
+          w="100%"
+        >
+          <CardBody>
+            <VStack align="start" spacing={4}>
+              <HStack color="#CDF683">
+                <Icon as={FiClock} />
+                <Text fontWeight="bold">Popular Topics</Text>
+              </HStack>
+              <VStack align="stretch" spacing={2} w="100%">
+                {popularTopics.map((topic, index) => (
+                  <Box
+                    key={index}
+                    bg="whiteAlpha.50"
+                    borderRadius="lg"
+                    borderWidth="1px"
+                    borderColor="whiteAlpha.100"
+                    transition="all 0.2s"
+                    _hover={{
+                      bg: "whiteAlpha.100",
+                      borderColor: "whiteAlpha.200",
+                      transform: "translateX(4px)"
+                    }}
+                    cursor="pointer"
+                    onClick={() => setInputValue(`Tell me about ${topic.title}`)}
+                  >
+                    <HStack spacing={3} p={3}>
+                      <Icon 
+                        as={FiClock} 
+                        color="whiteAlpha.700" 
+                        boxSize={4}
+                      />
+                      <Text 
+                        fontSize="sm" 
+                        color="white"
+                        fontWeight="medium"
+                      >
+                        {topic.title}
+                      </Text>
+                    </HStack>
+                  </Box>
+                ))}
+              </VStack>
+            </VStack>
+          </CardBody>
+        </Card>
+      </Box>
     </Box>
   );
+
+  const handleOpenMobileOverlay = () => {
+    setShowMobileOverlay(true);
+  };
+
+  const handleCloseMobileOverlay = () => {
+    setShowMobileOverlay(false);
+  };
 
   return (
     <Box
@@ -510,6 +583,196 @@ const TreeChat: React.FC = () => {
         pointerEvents="none"
       />
 
+      {/* Mobile History Overlay */}
+      <AnimatePresence>
+        {showMobileOverlay && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: '100%',
+              maxWidth: '100%',
+              background: 'rgba(0, 0, 0, 0.95)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 2100,
+              overflowY: 'auto'
+            }}
+          >
+            <VStack spacing={6} px={4} py={4}>
+              {/* Header with close button */}
+              <HStack justify="flex-end" w="100%" mb={2}>
+                <IconButton
+                  aria-label="Close menu"
+                  icon={<BsX size={24} />}
+                  onClick={handleCloseMobileOverlay}
+                  variant="solid"
+                  color="black"
+                  bg="#CDF683"
+                  size="lg"
+                  _hover={{
+                    bg: "#CDF683",
+                    transform: "rotate(90deg)"
+                  }}
+                  transition="all 0.3s"
+                  rounded="full"
+                  boxShadow="lg"
+                />
+              </HStack>
+
+              {/* Recent Chats Card */}
+              <Card
+                bg="whiteAlpha.50"
+                borderColor="whiteAlpha.200"
+                borderWidth={1}
+                _hover={{ 
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+                }}
+                transition="all 0.2s"
+                w="100%"
+              >
+                <CardBody>
+                  <VStack align="start" spacing={4} w="100%">
+                    <HStack justify="space-between" width="100%" mb={2}>
+                      <HStack color="#CDF683">
+                        <Icon as={FiClock} />
+                        <Text fontWeight="bold">Recent Chats</Text>
+                      </HStack>
+                      <Button
+                        onClick={() => {
+                          onRecentChatsOpen();
+                          handleCloseMobileOverlay();
+                        }}
+                        variant="ghost"
+                        size="sm"
+                        color="#CDF683"
+                        _hover={{
+                          bg: "rgba(205, 246, 131, 0.1)",
+                        }}
+                      >
+                        View All
+                      </Button>
+                    </HStack>
+                    <SimpleGrid columns={1} spacing={4} w="100%">
+                      {recentChats.map((chat) => (
+                        <Box
+                          key={chat.id}
+                          p={4}
+                          bg="whiteAlpha.50"
+                          borderRadius="lg"
+                          borderWidth="1px"
+                          borderColor="whiteAlpha.200"
+                          cursor="pointer"
+                          onClick={() => {
+                            handleCloseMobileOverlay();
+                            setShowWelcome(false);
+                          }}
+                          _hover={{
+                            bg: "whiteAlpha.100",
+                            borderColor: "rgba(205, 246, 131, 0.4)"
+                          }}
+                        >
+                          <VStack align="start" spacing={2}>
+                            <Text fontWeight="bold" color="white">
+                              {chat.title}
+                            </Text>
+                            <Text fontSize="sm" color="whiteAlpha.700">
+                              {chat.preview}
+                            </Text>
+                            <Text fontSize="xs" color="whiteAlpha.600">
+                              {chat.timestamp}
+                            </Text>
+                          </VStack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              {/* Saved Messages Card */}
+              <Card
+                bg="whiteAlpha.50"
+                borderColor="whiteAlpha.200"
+                borderWidth={1}
+                _hover={{ 
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+                }}
+                transition="all 0.2s"
+                w="100%"
+                pb={6}
+              >
+                <CardBody>
+                  <VStack align="start" spacing={4} w="100%">
+                    <HStack justify="space-between" width="100%" mb={2}>
+                      <HStack color="#CDF683">
+                        <Icon as={BsBookmarkFill} />
+                        <Text fontWeight="bold">Saved Messages</Text>
+                      </HStack>
+                      <Button
+                        onClick={() => {
+                          onAllSavedOpen();
+                          handleCloseMobileOverlay();
+                        }}
+                        variant="ghost"
+                        size="sm"
+                        color="#CDF683"
+                        _hover={{
+                          bg: "rgba(205, 246, 131, 0.1)",
+                        }}
+                      >
+                        View All
+                      </Button>
+                    </HStack>
+                    <SimpleGrid columns={1} spacing={4} w="100%">
+                      {savedMessages.slice(0, 3).map((msg) => (
+                        <Box
+                          key={msg.id}
+                          p={4}
+                          bg="whiteAlpha.50"
+                          borderRadius="lg"
+                          borderWidth="1px"
+                          borderColor="whiteAlpha.200"
+                          cursor="pointer"
+                          onClick={() => {
+                            setSelectedMessage(msg.content);
+                            onSavedMessageOpen();
+                            handleCloseMobileOverlay();
+                          }}
+                          _hover={{
+                            bg: "whiteAlpha.100",
+                            borderColor: "rgba(205, 246, 131, 0.4)"
+                          }}
+                        >
+                          <VStack align="start" spacing={2}>
+                            <Text fontWeight="bold" color="white">
+                              {msg.topic}
+                            </Text>
+                            <Text fontSize="sm" color="whiteAlpha.700" noOfLines={2}>
+                              {msg.content}
+                            </Text>
+                            <Text fontSize="xs" color="whiteAlpha.600">
+                              {msg.timestamp}
+                            </Text>
+                          </VStack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  </VStack>
+                </CardBody>
+              </Card>
+            </VStack>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Content wrapper */}
       <Box position="relative" zIndex={2}>
         <Container maxW="container.xl" pt={{ base: 4, md: 6 }}>
@@ -525,7 +788,54 @@ const TreeChat: React.FC = () => {
                     w="100%"
                     minH={{ base: "calc(100vh - 200px)", md: "auto" }}
                     justify={{ base: "center", md: "flex-start" }}
+                    position="relative"
                   >
+                    {/* History button */}
+                    <Button
+                      position="fixed"
+                      top={3}
+                      right={4}
+                      onClick={handleOpenMobileOverlay}
+                      display={{ base: 'flex', md: 'none' }}
+                      alignItems="center"
+                      bg="rgba(13, 16, 22, 0.7)"
+                      backdropFilter="blur(10px)"
+                      border="1px solid"
+                      borderColor="#CDF683"
+                      color="white"
+                      px={4}
+                      h="42px"
+                      zIndex={2000}
+                      _hover={{
+                        bg: "rgba(13, 16, 22, 0.8)",
+                        transform: "translateY(-1px)",
+                        shadow: "lg",
+                      }}
+                      _active={{
+                        bg: "rgba(13, 16, 22, 0.9)",
+                        transform: "translateY(0)",
+                      }}
+                      transition="all 0.2s"
+                      boxShadow="0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                    >
+                      <HStack spacing={2}>
+                        <Icon as={BsClock} color="#CDF683" boxSize={4} />
+                        <Text>Chats</Text>
+                        <Box
+                          bg="#CDF683"
+                          color="black"
+                          px={2}
+                          py={0.5}
+                          borderRadius="full"
+                          fontSize="xs"
+                          fontWeight="bold"
+                          minW="20px"
+                          textAlign="center"
+                        >
+                          {recentChats.length}
+                        </Box>
+                      </HStack>
+                    </Button>
                     <Badge
                       colorScheme="green"
                       variant="subtle"
@@ -576,100 +886,72 @@ const TreeChat: React.FC = () => {
                     </Flex>
                   </VStack>
 
-                  {/* Cards Section - Hidden on mobile by default */}
-                  <Box 
-                    display={{ base: showMobileCards ? 'block' : 'none', md: 'block' }}
-                    w="100%" 
-                    position={{ base: 'fixed', md: 'relative' }}
-                    top={{ base: 0, md: 'auto' }}
-                    left={{ base: 0, md: 'auto' }}
-                    right={{ base: 0, md: 'auto' }}
-                    bottom={{ base: 0, md: 'auto' }}
-                    bg={{ base: 'rgba(0, 0, 0, 0.95)', md: 'transparent' }}
-                    zIndex={{ base: 1000, md: 1 }}
-                    overflowY={{ base: 'auto', md: 'visible' }}
-                    pb="35px"
-                    px={{ base: 4, md: 0 }}
-                  >
-                    {/* Recent Chats Section */}
-                    <Box w="100%" px={4} pt={{ base: 16, md: 0 }}>
-                      <Card
-                        bg="whiteAlpha.50"
-                        borderColor="whiteAlpha.200"
-                        borderWidth={1}
-                        _hover={{ 
-                          transform: "translateY(-2px)",
-                          boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
-                        }}
-                        transition="all 0.2s"
-                        w="100%"
-                      >
-                        <CardBody>
-                          <VStack align="start" spacing={4} w="100%">
-                            <HStack justify="space-between" width="100%" mb={2}>
-                              <HStack color="#CDF683">
-                                <Icon as={FiClock} />
-                                <Text fontWeight="bold">Recent Chats</Text>
-                              </HStack>
-                              <Button
-                                onClick={() => {
-                                  onRecentChatsOpen();
-                                  setTimeout(scrollToBottom, 100);
-                                }}
-                                variant="ghost"
-                                size="sm"
-                                color="#CDF683"
-                                _hover={{
-                                  bg: "rgba(205, 246, 131, 0.1)",
-                                  transform: "translateX(-5px)"
-                                }}
-                                transition="all 0.3s"
-                                pl={4}
-                                pr={6}
-                                borderRadius="full"
-                                bgGradient="linear(to-r, rgba(205, 246, 131, 0.1), transparent)"
-                              >
-                                View All
-                              </Button>
+                  {/* Desktop Cards Layout */}
+                  <Box display={{ base: 'none', md: 'block' }} w="100%" px={4}>
+                    {/* Recent Chats - Full Width */}
+                    <Card
+                      bg="whiteAlpha.50"
+                      borderColor="whiteAlpha.200"
+                      borderWidth={1}
+                      mb={6}
+                      _hover={{ 
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+                      }}
+                      transition="all 0.2s"
+                      w="100%"
+                    >
+                      <CardBody>
+                        <VStack align="start" spacing={4}>
+                          <HStack justify="space-between" width="100%">
+                            <HStack color="#CDF683">
+                              <Icon as={FiClock} />
+                              <Text fontWeight="bold">Recent Chats</Text>
                             </HStack>
-                            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} w="100%">
-                              {recentChats.map((chat) => (
-                                <Box
-                                  key={chat.id}
-                                  p={4}
-                                  bg="whiteAlpha.50"
-                                  borderRadius="lg"
-                                  borderWidth="1px"
-                                  borderColor="whiteAlpha.200"
-                                  cursor="pointer"
-                                  _hover={{
-                                    bg: "whiteAlpha.100",
-                                    borderColor: "#CDF683"
-                                  }}
-                                  transition="all 0.2s"
-                                  onClick={() => setShowWelcome(false)}
-                                >
-                                  <VStack align="start" spacing={2}>
-                                    <Text fontWeight="bold" color="white">
-                                      {chat.title}
-                                    </Text>
-                                    <Text fontSize="sm" color="whiteAlpha.700" noOfLines={2}>
-                                      {chat.preview}
-                                    </Text>
-                                    <Text fontSize="xs" color="whiteAlpha.600">
-                                      {chat.timestamp}
-                                    </Text>
-                                  </VStack>
-                                </Box>
-                              ))}
-                            </SimpleGrid>
-                          </VStack>
-                        </CardBody>
-                      </Card>
-                    </Box>
+                            <Button
+                              onClick={onRecentChatsOpen}
+                              variant="ghost"
+                              size="sm"
+                              color="#CDF683"
+                              _hover={{
+                                bg: "rgba(205, 246, 131, 0.1)",
+                              }}
+                            >
+                              View All
+                            </Button>
+                          </HStack>
+                          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} w="100%">
+                            {recentChats.map((chat) => (
+                              <Box
+                                key={chat.id}
+                                p={4}
+                                bg="whiteAlpha.50"
+                                borderRadius="lg"
+                                borderWidth="1px"
+                                borderColor="whiteAlpha.200"
+                                cursor="pointer"
+                                onClick={() => setShowWelcome(false)}
+                              >
+                                <VStack align="start" spacing={2}>
+                                  <Text fontWeight="bold" color="white">
+                                    {chat.title}
+                                  </Text>
+                                  <Text fontSize="sm" color="whiteAlpha.700" noOfLines={2}>
+                                    {chat.preview}
+                                  </Text>
+                                  <Text fontSize="xs" color="whiteAlpha.600">
+                                    {chat.timestamp}
+                                  </Text>
+                                </VStack>
+                              </Box>
+                            ))}
+                          </SimpleGrid>
+                        </VStack>
+                      </CardBody>
+                    </Card>
 
-                    {/* Saved Messages and Popular Topics Cards */}
-                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} px={4} w="100%" mt={4} mb={0}> 
+                    {/* Two Column Layout for Saved Messages and Popular Topics */}
+                    <SimpleGrid columns={2} spacing={6} w="100%">
                       {/* Saved Messages Card */}
                       <Card
                         bg="whiteAlpha.50"
@@ -680,16 +962,13 @@ const TreeChat: React.FC = () => {
                           boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
                         }}
                         transition="all 0.2s"
-                        w="100%"
                       >
                         <CardBody>
                           <VStack align="start" spacing={4}>
-                            <HStack justify="space-between" align="center" width="100%" mb={4}>
+                            <HStack justify="space-between" width="100%">
                               <HStack color="#CDF683">
                                 <Icon as={BsBookmarkFill} />
-                                <Text fontWeight="bold">
-                                  Saved Messages
-                                </Text>
+                                <Text fontWeight="bold">Saved Messages</Text>
                               </HStack>
                               <Button
                                 onClick={onAllSavedOpen}
@@ -698,13 +977,7 @@ const TreeChat: React.FC = () => {
                                 color="#CDF683"
                                 _hover={{
                                   bg: "rgba(205, 246, 131, 0.1)",
-                                  transform: "translateX(-5px)"
                                 }}
-                                transition="all 0.3s"
-                                pl={4}
-                                pr={6}
-                                borderRadius="full"
-                                bgGradient="linear(to-r, rgba(205, 246, 131, 0.1), transparent)"
                               >
                                 View All
                               </Button>
@@ -759,7 +1032,6 @@ const TreeChat: React.FC = () => {
                           boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
                         }}
                         transition="all 0.2s"
-                        w="100%"
                       >
                         <CardBody>
                           <VStack align="start" spacing={4}>
@@ -806,69 +1078,80 @@ const TreeChat: React.FC = () => {
                       </Card>
                     </SimpleGrid>
                   </Box>
+
                 </VStack>
               ) : (
                 // Chat screen content
-                <VStack spacing={2} flex="1" w="100%" position="relative">
-                  {/* Back button - fixed position */}
+                <VStack spacing={4} align="stretch" width="100%" position="relative">
+                  {/* Back button and menu button container */}
                   <Box
                     position="fixed"
                     top={0}
                     left={0}
                     right={0}
-                    py={2}
+                    py={{ base: 3, md: 4 }}
                     px={{ base: 4, md: 6 }}
-                    bg="rgba(0, 0, 0, 0.8)"
+                    bg="rgba(0, 0, 0, 0.3)"
                     backdropFilter="blur(10px)"
                     borderBottom="1px solid"
-                    borderColor="whiteAlpha.100"
+                    borderColor="whiteAlpha.200"
                     zIndex={1000}
                   >
                     <Container maxW="container.xl">
-                      <IconButton
-                        aria-label="Back to welcome"
-                        icon={<BsArrowLeft />}
-                        onClick={handleBackToHome}
-                        variant="ghost"
-                        color="#CDF683"
-                        _hover={{
-                          bg: "rgba(205, 246, 131, 0.1)",
-                          transform: "translateX(-5px)"
-                        }}
-                        transition="all 0.2s"
-                      />
+                      <HStack justify="space-between" align="center">
+                        <IconButton
+                          aria-label="Back to welcome"
+                          icon={<BsArrowLeft />}
+                          onClick={handleBackToHome}
+                          variant="ghost"
+                          color="#CDF683"
+                          _hover={{
+                            bg: "rgba(205, 246, 131, 0.1)",
+                            transform: "translateX(-5px)"
+                          }}
+                          transition="all 0.2s"
+                        />
+                        {/* Menu button for mobile */}
+                        <IconButton
+                          aria-label="Show menu"
+                          icon={<BsThreeDotsVertical />}
+                          onClick={() => setShowMobileOverlay(true)}
+                          variant="ghost"
+                          color="#CDF683"
+                          display={{ base: 'flex', md: 'none' }}
+                          _hover={{
+                            bg: "rgba(205, 246, 131, 0.1)",
+                          }}
+                        />
+                      </HStack>
                     </Container>
                   </Box>
 
                   {/* Chat messages container */}
                   <Box
-                    flex="1"
-                    w="100%"
-                    overflowY="auto"
+                    ref={chatContainerRef}
+                    flex={1}
+                    width="100%"
                     position="relative"
                     mt="60px"
-                    pb={{ base: "180px", md: "120px" }}
-                    maxH="calc(100vh - 60px)"
+                    maxH="calc(100vh - 180px)"
+                    overflowY="auto"
                     css={{
                       '&::-webkit-scrollbar': {
-                        width: '4px',
+                        display: 'none'
                       },
-                      '&::-webkit-scrollbar-track': {
-                        width: '6px',
-                        background: 'rgba(0,0,0,0.1)',
-                      },
-                      '&::-webkit-scrollbar-thumb': {
-                        background: 'rgba(255,255,255,0.2)',
-                        borderRadius: '24px',
-                      },
-                      scrollbarWidth: 'thin',
-                      scrollbarColor: 'rgba(255,255,255,0.2) rgba(0,0,0,0.1)',
-                      WebkitOverflowScrolling: 'touch',
-                      '-webkit-transform': 'translateZ(0)',
+                      'msOverflowStyle': 'none',
+                      'scrollbarWidth': 'none'
                     }}
                   >
-                    {/* Messages */}
-                    <VStack spacing={4} w="100%" align="stretch">
+                    <VStack
+                      width="100%"
+                      spacing={4}
+                      align="stretch"
+                      px={4}
+                      pt={4}
+                      pb={0}
+                    >
                       {messages.map((message, index) => (
                         <Box
                           key={index}
@@ -941,7 +1224,6 @@ const TreeChat: React.FC = () => {
                           </HStack>
                         </Box>
                       ))}
-                      <div ref={messagesEndRef} />
                     </VStack>
                   </Box>
 
@@ -960,13 +1242,9 @@ const TreeChat: React.FC = () => {
                     shadow="lg"
                     zIndex={2000}
                     onClick={scrollToBottom}
-                    display={{ base: 'flex', md: 'none' }}
-                    opacity={0.9}
-                    _hover={{
-                      transform: 'translateY(-2px)',
-                      opacity: 1
-                    }}
-                    transition="all 0.2s"
+                    display={showScrollButton ? { base: 'flex', md: 'none' } : 'none'}
+                    opacity={0.8}
+                    _hover={{ opacity: 1 }}
                   />
                 </VStack>
               )}
@@ -978,70 +1256,65 @@ const TreeChat: React.FC = () => {
               bottom={0}
               left={0}
               right={0}
-              py={{ base: 3, md: 4 }}
-              px={{ base: 4, md: 6 }}
-              bg="rgba(0, 0, 0, 0.95)"
+              p={4}
+              bg="rgba(0, 0, 0, 0.3)"
               backdropFilter="blur(10px)"
               borderTop="1px solid"
-              borderColor="whiteAlpha.100"
+              borderColor="whiteAlpha.200"
               zIndex={1000}
-              style={{
-                WebkitTransform: 'translate3d(0,0,0)',
-                transform: 'translate3d(0,0,0)',
-                WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden',
-                ...(window.innerWidth <= 768 && {
-                  paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)'
-                })
-              }}
             >
-              <Container maxW="container.xl">
-                <Flex align="center">
-                  <InputGroup size="lg" flex={1}>
-                    <Input
-                      ref={inputRef}
-                      placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      bg="rgba(255, 255, 255, 0.03)"
-                      border="1px solid"
-                      borderColor="whiteAlpha.200"
-                      _hover={{
-                        borderColor: "whiteAlpha.300",
-                        bg: "rgba(255, 255, 255, 0.05)"
-                      }}
-                      _focus={{
-                        borderColor: "#CDF683",
-                        boxShadow: "0 0 0 1px #CDF683"
-                      }}
-                      color="white"
-                      _placeholder={{ color: "whiteAlpha.500" }}
-                      style={{
-                        WebkitAppearance: 'none',
-                        fontSize: '16px',
-                        transform: 'translate3d(0,0,0)',
-                        WebkitTransform: 'translate3d(0,0,0)'
-                      }}
-                    />
-                  </InputGroup>
-                  
-                  <HStack spacing={2} ml={4}>
+              <InputGroup>
+                <Input
+                  placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}
+                  bg="whiteAlpha.100"
+                  border="none"
+                  _hover={{ bg: "whiteAlpha.200" }}
+                  _focus={{ bg: "whiteAlpha.200", boxShadow: "none" }}
+                  color="white"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  pr="120px"
+                />
+                <InputRightElement width="auto" pr={2}>
+                  <HStack spacing={1}>
                     <IconButton
-                      aria-label="Send message"
-                      icon={<FaPaperPlane />}
-                      colorScheme="green"
-                      variant="solid"
-                      bg="#CDF683"
-                      color="black"
-                      _hover={{ bg: "#CDF683" }}
-                      onClick={handleSendMessage}
-                      isLoading={isLoading}
-                      isDisabled={!inputValue.trim() || isRateLimited}
+                      aria-label="Upload file"
+                      icon={<BsUpload size={22} />}
+                      variant="ghost"
+                      color="#CDF683"
+                      size="sm"
+                      _hover={{ bg: "whiteAlpha.200" }}
                     />
+                    <IconButton
+                      aria-label="Take photo"
+                      icon={<BsCamera size={22} />}
+                      variant="ghost"
+                      color="#CDF683"
+                      size="sm"
+                      _hover={{ bg: "whiteAlpha.200" }}
+                    />
+                    {inputValue.trim() && (
+                      <IconButton
+                        aria-label="Send message"
+                        icon={<BsSend size={22} />}
+                        size="md"
+                        bg="#CDF683"
+                        color="black"
+                        onClick={handleSendMessage}
+                        _hover={{ bg: "#bef55f" }}
+                        h="40px"
+                        w="40px"
+                      />
+                    )}
                   </HStack>
-                </Flex>
-              </Container>
+                </InputRightElement>
+              </InputGroup>
             </Box>
           </Flex>
         </Container>
