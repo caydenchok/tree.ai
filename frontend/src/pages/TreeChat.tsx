@@ -794,13 +794,28 @@ const TreeChat: React.FC = () => {
               ) : (
                 // Chat screen content
                 <VStack spacing={2} flex="1" w="100%" position="relative">
+                  {/* Back button */}
+                  <HStack w="100%" justify="space-between" mb={4}>
+                    <IconButton
+                      aria-label="Back to welcome"
+                      icon={<BsArrowLeft />}
+                      onClick={handleBackToHome}
+                      variant="ghost"
+                      color="#CDF683"
+                      _hover={{
+                        bg: "rgba(205, 246, 131, 0.1)",
+                        transform: "translateX(-5px)"
+                      }}
+                      transition="all 0.2s"
+                    />
+                  </HStack>
                   {/* Chat messages container */}
                   <Box
                     flex="1"
                     w="100%"
                     overflowY="auto"
                     position="relative"
-                    pb={{ base: "140px", md: "160px" }}
+                    pb={{ base: "140px", md: "120px" }}
                     css={{
                       '&::-webkit-scrollbar': {
                         width: '4px',
@@ -816,7 +831,6 @@ const TreeChat: React.FC = () => {
                       scrollbarWidth: 'thin',
                       scrollbarColor: 'rgba(255,255,255,0.2) rgba(0,0,0,0.1)',
                       WebkitOverflowScrolling: 'touch',
-                      marginBottom: '20px',
                     }}
                   >
                     {/* Messages */}
@@ -905,7 +919,7 @@ const TreeChat: React.FC = () => {
               bottom={0}
               left={0}
               right={0}
-              py={{ base: 3, md: 4 }}
+              py={4}
               px={{ base: 4, md: 6 }}
               bg="rgba(0, 0, 0, 0.8)"
               backdropFilter="blur(10px)"
@@ -917,7 +931,9 @@ const TreeChat: React.FC = () => {
                 transform: 'translate3d(0,0,0)',
                 WebkitBackfaceVisibility: 'hidden',
                 backfaceVisibility: 'hidden',
-                paddingBottom: 'env(safe-area-inset-bottom)'
+                ...(window.innerWidth <= 768 && {
+                  paddingBottom: 'env(safe-area-inset-bottom)'
+                })
               }}
             >
               <Container maxW="container.xl">
