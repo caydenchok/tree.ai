@@ -184,19 +184,26 @@ const TreeChat: React.FC = () => {
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
       const scrollOptions = {
-        behavior: 'smooth',
+        behavior: 'smooth' as ScrollBehavior,
         block: 'end',
       };
       
+      // Use a slightly longer delay to ensure content is rendered
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView(scrollOptions);
-      }, 100);
+      }, 150);
     }
   }, []);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      scrollToBottom();
+    }
+  }, [isLoading, scrollToBottom]);
 
   const formatTimeRemaining = (endTime: Date) => {
     const now = new Date();
@@ -268,10 +275,16 @@ const TreeChat: React.FC = () => {
       
       // Blur input to dismiss keyboard on mobile
       inputRef.current?.blur();
+      
+      // Scroll after user message
+      scrollToBottom();
 
       // Get response from API
       const response = await chatService.sendMessage(userMessage.content);
       setMessages(prev => [...prev, response]);
+      
+      // Scroll after AI response
+      scrollToBottom();
     } catch (error) {
       toast({
         title: "Error",
@@ -831,7 +844,7 @@ const TreeChat: React.FC = () => {
                     overflowY="auto"
                     position="relative"
                     mt="60px"
-                    pb={{ base: "140px", md: "120px" }}
+                    pb={{ base: "180px", md: "120px" }}
                     maxH="calc(100vh - 60px)"
                     css={{
                       '&::-webkit-scrollbar': {
@@ -926,6 +939,29 @@ const TreeChat: React.FC = () => {
                       ))}
                       <div ref={messagesEndRef} />
                     </VStack>
+                    {/* Floating button for mobile */}
+                    <IconButton
+                      aria-label="Scroll to bottom"
+                      icon={<BsArrowLeft style={{ transform: 'rotate(-90deg)' }} />}
+                      position="fixed"
+                      bottom={{ base: "100px", md: "120px" }}
+                      right={4}
+                      colorScheme="green"
+                      bg="#CDF683"
+                      color="black"
+                      rounded="full"
+                      size="lg"
+                      shadow="lg"
+                      zIndex={1000}
+                      onClick={scrollToBottom}
+                      display={{ base: 'flex', md: 'none' }}
+                      opacity={0.9}
+                      _hover={{
+                        transform: 'translateY(-2px)',
+                        opacity: 1
+                      }}
+                      transition="all 0.2s"
+                    />
                   </Box>
                 </VStack>
               )}
@@ -937,9 +973,9 @@ const TreeChat: React.FC = () => {
               bottom={0}
               left={0}
               right={0}
-              py={4}
+              py={{ base: 3, md: 4 }}
               px={{ base: 4, md: 6 }}
-              bg="rgba(0, 0, 0, 0.8)"
+              bg="rgba(0, 0, 0, 0.95)"
               backdropFilter="blur(10px)"
               borderTop="1px solid"
               borderColor="whiteAlpha.100"
@@ -950,7 +986,7 @@ const TreeChat: React.FC = () => {
                 WebkitBackfaceVisibility: 'hidden',
                 backfaceVisibility: 'hidden',
                 ...(window.innerWidth <= 768 && {
-                  paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)'
+                  paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)'
                 })
               }}
             >
