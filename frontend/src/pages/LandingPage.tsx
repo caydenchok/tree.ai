@@ -776,7 +776,7 @@ const LandingPage = () => {
         
         {/* Hero Section */}
         <Box minH="100vh">
-          <Container maxW="container.xl" position="relative" pt={{ base: 24, md: 32 }} pb={20}>
+          <Container maxW="container.xl" position="relative" pt={{ base: 36, md: 32 }} pb={20}>
             {/* Main Content */}
             <Flex 
               direction={{ base: 'column', lg: 'row' }} 
