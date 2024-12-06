@@ -383,32 +383,39 @@ const TreeChat: React.FC = () => {
 
   const WelcomeContent = () => (
     <Box textAlign="center" mb={2}>
-      <Badge
-        colorScheme="green"
-        variant="subtle"
-        px={3}
-        py={1}
-        borderRadius="full"
+      <Box 
+        mt={{ base: "80px", md: 0 }}
+        w="100%"
         display="flex"
-        alignItems="center"
-        gap={2}
-        fontSize="sm"
-        bg="rgba(255, 255, 255, 0.03)"
-        color="#CDF683"
-        borderWidth={1}
-        borderColor="#CDF683"
-        cursor="pointer"
-        transition="all 0.2s"
-        _hover={{
-          bg: "rgba(255, 255, 255, 0.06)",
-          transform: "translateY(-1px)",
-          boxShadow: "0 4px 20px rgba(130, 205, 71, 0.3)"
-        }}
-        onClick={() => {/* Handle upgrade click */}}
+        justifyContent="center"
       >
-        <Icon as={FaCrown} />
-        Using limited free plan • Upgrade
-      </Badge>
+        <Badge
+          colorScheme="green"
+          variant="subtle"
+          px={3}
+          py={1}
+          borderRadius="full"
+          display="flex"
+          alignItems="center"
+          gap={2}
+          fontSize="sm"
+          bg="rgba(255, 255, 255, 0.03)"
+          color="#CDF683"
+          borderWidth={1}
+          borderColor="#CDF683"
+          cursor="pointer"
+          transition="all 0.2s"
+          _hover={{
+            bg: "rgba(255, 255, 255, 0.06)",
+            transform: "translateY(-1px)",
+            boxShadow: "0 4px 20px rgba(130, 205, 71, 0.3)"
+          }}
+          onClick={() => {/* Handle upgrade click */}}
+        >
+          <Icon as={FaCrown} />
+          Using limited free plan • Upgrade
+        </Badge>
+      </Box>
       
       <Flex 
         align="center" 
@@ -568,9 +575,10 @@ const TreeChat: React.FC = () => {
 
         <Container 
           maxW="container.xl" 
-          py={{ base: 2, md: 4 }}
+          py={{ base: 20, md: 4 }}
           px={{ base: 2, md: 6 }}
-          h="calc(100vh - 80px)"  
+          h="calc(100vh - 80px)"
+          mt={{ base: "60px", md: 0 }}  
         >
           <Flex direction="column" h="100%" py={2}>  
             <VStack 
@@ -579,7 +587,7 @@ const TreeChat: React.FC = () => {
               w="100%"
               h={{ base: "100vh", md: "calc(100vh - 140px)" }}
               justify={{ base: "flex-start", md: "flex-start" }}
-              pt={{ base: "90px", md: 2 }}
+              pt={{ base: "120px", md: 2 }}
             >
               {showWelcome ? (
                 <VStack spacing={2} flex="1" w="100%" position="relative">
@@ -617,58 +625,10 @@ const TreeChat: React.FC = () => {
                         w="100%"
                         minH={{ base: "calc(100vh - 200px)", md: "auto" }}
                         justify={{ base: "flex-start", md: "flex-start" }}
-                        pt={{ base: 6, md: 0 }}
+                        pt={{ base: 10, md: 0 }}
                         px={{ base: 4, md: 0 }}
                       >
-                        <Badge
-                          colorScheme="green"
-                          variant="subtle"
-                          px={3}
-                          py={1}
-                          borderRadius="full"
-                          display="flex"
-                          alignItems="center"
-                          gap={2}
-                          fontSize="sm"
-                          bg="rgba(255, 255, 255, 0.03)"
-                          color="#CDF683"
-                          borderWidth={1}
-                          borderColor="#CDF683"
-                          cursor="pointer"
-                          transition="all 0.2s"
-                          mt={{ base: 4, md: 0 }}
-                          _hover={{
-                            bg: "rgba(255, 255, 255, 0.06)",
-                            transform: "translateY(-1px)",
-                            boxShadow: "0 4px 20px rgba(130, 205, 71, 0.3)"
-                          }}
-                          onClick={() => {/* Handle upgrade click */}}
-                        >
-                          <Icon as={FaCrown} />
-                          Using limited free plan • Upgrade
-                        </Badge>
-                        
-                        <Flex 
-                          align="center" 
-                          gap={2}
-                          direction="column"
-                        >
-                          <Box as="span" color="#CDF683">✧</Box>
-                          <Heading 
-                            color="white" 
-                            fontSize="3xl" 
-                            textAlign="center"
-                          >
-                            {getGreeting()}
-                          </Heading>
-                          <Text 
-                            color="whiteAlpha.800" 
-                            fontSize="lg"
-                            textAlign="center"
-                          >
-                            {getLateNightMessage()}
-                          </Text>
-                        </Flex>
+                        <WelcomeContent />
                       </VStack>
 
                       {/* Cards Section - Hidden on mobile by default */}
