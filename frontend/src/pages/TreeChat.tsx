@@ -800,7 +800,7 @@ const TreeChat: React.FC = () => {
                     w="100%"
                     overflowY="auto"
                     position="relative"
-                    pb={{ base: "100px", md: "120px" }}
+                    pb={{ base: "140px", md: "160px" }}
                     css={{
                       '&::-webkit-scrollbar': {
                         width: '4px',
@@ -816,6 +816,7 @@ const TreeChat: React.FC = () => {
                       scrollbarWidth: 'thin',
                       scrollbarColor: 'rgba(255,255,255,0.2) rgba(0,0,0,0.1)',
                       WebkitOverflowScrolling: 'touch',
+                      marginBottom: '20px',
                     }}
                   >
                     {/* Messages */}
@@ -904,7 +905,7 @@ const TreeChat: React.FC = () => {
               bottom={0}
               left={0}
               right={0}
-              py={4}
+              py={{ base: 3, md: 4 }}
               px={{ base: 4, md: 6 }}
               bg="rgba(0, 0, 0, 0.8)"
               backdropFilter="blur(10px)"
@@ -915,7 +916,8 @@ const TreeChat: React.FC = () => {
                 WebkitTransform: 'translate3d(0,0,0)',
                 transform: 'translate3d(0,0,0)',
                 WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden'
+                backfaceVisibility: 'hidden',
+                paddingBottom: 'env(safe-area-inset-bottom)'
               }}
             >
               <Container maxW="container.xl">
