@@ -1053,6 +1053,11 @@ const TreeChat: React.FC = () => {
               backdropFilter="blur(10px)"
               borderTop="1px solid"
               borderColor="whiteAlpha.100"
+              style={{
+                position: '-webkit-sticky',
+                WebkitTransform: 'translate3d(0,0,0)',
+                zIndex: 1000
+              }}
             >
               <Container maxW="container.xl">
                 <Flex align="center">
@@ -1075,6 +1080,10 @@ const TreeChat: React.FC = () => {
                       }}
                       color="white"
                       _placeholder={{ color: "whiteAlpha.500" }}
+                      style={{
+                        WebkitAppearance: 'none',
+                        fontSize: '16px'
+                      }}
                     />
                   </InputGroup>
                   
