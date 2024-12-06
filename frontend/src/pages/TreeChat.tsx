@@ -161,8 +161,37 @@ const TreeChat: React.FC = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    // Set initial viewport height
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    // Set initial height
+    setVH();
+
+    // Update on resize and orientation change
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', setVH);
+
+    return () => {
+      window.removeEventListener('resize', setVH);
+      window.removeEventListener('orientationchange', setVH);
+    };
+  }, []);
+
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      const scrollOptions = {
+        behavior: 'smooth',
+        block: 'end',
+      };
+      
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView(scrollOptions);
+      }, 100);
+    }
   }, []);
 
   useEffect(() => {
@@ -440,137 +469,28 @@ const TreeChat: React.FC = () => {
   );
 
   return (
-    <Box
+    <MotionBox
+      w="full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
       position="relative"
-      minH="100vh"
-      w="100%"
+      height="calc(var(--vh, 1vh) * 100)"
       overflow="hidden"
-      bg="black"
-      css={{
-        background: 'radial-gradient(circle at 50% 50%, rgba(205, 246, 131, 0.03), rgba(0, 0, 0, 1))',
-      }}
     >
+      <TechTreeBackground />
       <Box position="fixed" top={0} left={0} right={0} bottom={0} zIndex={0}>
         <TechTreeBackground />
       </Box>
 
       {/* Content wrapper */}
-      <Box position="relative" zIndex={2}>
-        {/* Saved Messages Overlay */}
-        <Modal isOpen={isAllSavedOpen} onClose={onAllSavedClose} size="4xl" motionPreset="slideInBottom">
-          <ModalOverlay 
-            bg="blackAlpha.700" 
-            backdropFilter="blur(10px)"
-          />
-          <ModalContent 
-            bg="rgba(0, 0, 0, 0.8)"
-            maxH="85vh"
-            boxShadow="dark-lg"
-            mx={4}
-            borderWidth="1px"
-            borderColor="whiteAlpha.200"
-            backdropFilter="blur(16px)"
-            css={{
-              '&::-webkit-scrollbar': {
-                width: '4px',
-              },
-              '&::-webkit-scrollbar-track': {
-                width: '6px',
-                background: 'rgba(0,0,0,0.1)',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: 'rgba(205, 246, 131, 0.5)',
-                borderRadius: '24px',
-              },
-            }}
-          >
-            <ModalHeader 
-              color="#CDF683"
-              fontSize="xl" 
-              fontWeight="bold"
-              borderBottom="1px solid"
-              borderColor="whiteAlpha.200"
-              pb={4}
-            >
-              <HStack color="#CDF683">
-                <Icon as={BsBookmarkFill} />
-                <Text fontWeight="bold">
-                  Saved Messages
-                </Text>
-              </HStack>
-            </ModalHeader>
-            <ModalCloseButton color="white" />
-            <ModalBody py={6}>
-              <VStack spacing={4} align="stretch" w="100%">
-                {savedMessages.map((msg) => (
-                  <Box
-                    key={msg.id}
-                    p={4}
-                    bg="whiteAlpha.50"
-                    borderRadius="lg"
-                    borderWidth="1px"
-                    borderColor="whiteAlpha.100"
-                    _hover={{
-                      bg: "whiteAlpha.100",
-                      borderColor: "#CDF683"
-                    }}
-                    transition="all 0.2s"
-                    cursor="pointer"
-                    onClick={() => {
-                      setSelectedMessage(msg.content);
-                      onSavedMessageOpen();
-                    }}
-                  >
-                    <VStack align="start" spacing={2}>
-                      <HStack justify="space-between" width="100%">
-                        <Badge
-                          colorScheme="green"
-                          bg="rgba(205, 246, 131, 0.1)"
-                          color="#CDF683"
-                          px={2}
-                          py={1}
-                          borderRadius="full"
-                        >
-                          {msg.topic}
-                        </Badge>
-                        <HStack>
-                          <Text fontSize="xs" color="whiteAlpha.600">
-                            {msg.timestamp}
-                          </Text>
-                          <IconButton
-                            aria-label="Remove saved message"
-                            icon={<Icon as={BsTrash} />}
-                            size="xs"
-                            variant="ghost"
-                            color="red.300"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSavedMessages(prev => prev.filter(m => m.id !== msg.id));
-                              toast({
-                                title: "Message removed",
-                                status: "success",
-                                duration: 2000,
-                                isClosable: true,
-                              });
-                            }}
-                            _hover={{
-                              bg: "rgba(255, 69, 58, 0.1)",
-                              color: "red.400"
-                            }}
-                          />
-                        </HStack>
-                      </HStack>
-                      <Text fontSize="sm" color="whiteAlpha.900" lineHeight="1.6">
-                        {msg.content}
-                      </Text>
-                    </VStack>
-                  </Box>
-                ))}
-              </VStack>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-
+      <Box 
+        position="relative" 
+        zIndex={2} 
+        height="100%"
+        display="flex"
+        flexDirection="column"
+      >
         <Container 
           maxW="container.xl" 
           py={{ base: 2, md: 4 }}
@@ -905,143 +825,169 @@ const TreeChat: React.FC = () => {
                 </VStack>
               ) : (
                 <VStack spacing={2} flex="1" w="100%" position="relative">
-                  {/* Glassy Background Card */}
-                  <Box
-                    position="absolute"
-                    top={-8}
-                    left={{ base: -8, md: -16 }}
-                    right={{ base: -8, md: -16 }}
-                    bottom={-25}
-                    bg="rgba(0, 0, 0, 0.3)"
-                    borderRadius="2xl"
-                    borderWidth="1px"
-                    borderColor="whiteAlpha.100"
-                    backdropFilter="blur(10px)"
-                    boxShadow="dark-lg"
-                    overflow="hidden"
-                    zIndex={0}
-                  />
-                  
-                  {/* Chat Content */}
-                  <Flex
-                    direction="column"
+                  {/* Chat container */}
+                  <Box 
                     flex="1"
-                    p={{ base: 6, md: 6 }}
+                    overflowY="auto"
                     position="relative"
-                    zIndex={1}
-                    w="100%"
+                    pb={{ base: "80px", md: "100px" }}
+                    css={{
+                      '&::-webkit-scrollbar': {
+                        width: '4px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        width: '6px',
+                        background: 'rgba(0,0,0,0.1)',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(255,255,255,0.2)',
+                        borderRadius: '24px',
+                      },
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: 'rgba(255,255,255,0.2) rgba(0,0,0,0.1)',
+                      WebkitOverflowScrolling: 'touch',
+                      height: '100%',
+                      overscrollBehavior: 'contain'
+                    }}
                   >
-                    <VStack spacing={6} w="100%" align="stretch">
-                      {/* Back Button and Messages */}
-                      <Box w="100%" mb={2}>
-                        <Button
-                          leftIcon={<Icon as={BsArrowLeft} />}
-                          variant="ghost"
-                          color="#CDF683"
-                          onClick={handleBackToHome}
-                          _hover={{
-                            bg: "rgba(205, 246, 131, 0.1)",
-                            transform: "translateX(-5px)"
-                          }}
-                          transition="all 0.3s"
-                          position="relative"
-                          pl={4}
-                          pr={6}
-                          borderRadius="full"
-                          bgGradient="linear(to-r, rgba(205, 246, 131, 0.1), transparent)"
-                          float="right"
-                        >
-                          Back
-                        </Button>
-                      </Box>
-                      
-                      {messages.map((message, index) => (
-                        <Box
-                          key={index}
-                          p={6}
-                          bgGradient={
-                            message.role === 'assistant'
-                              ? "linear(to-r, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2))"
-                              : "linear(to-r, rgba(205, 246, 131, 0.15), rgba(205, 246, 131, 0.1))"
-                          }
-                          borderRadius="lg"
-                          borderWidth="1px"
-                          borderColor={message.role === 'assistant' ? "whiteAlpha.100" : "#CDF683"}
-                          width="100%"
-                          maxW="100%"
-                          mx="auto"
-                          mb={4}
-                          backdropFilter="blur(8px)"
-                          boxShadow="lg"
-                          _hover={{
-                            transform: "translateY(-2px)",
-                            boxShadow: "xl",
-                          }}
-                          transition="all 0.2s"
-                        >
-                          <HStack spacing={4} align="start" width="100%">
-                            <Avatar
-                              size="sm"
-                              icon={message.role === 'assistant' ? <FaRobot /> : <FaUser />}
-                              bg={message.role === 'assistant' ? "green.500" : "blue.500"}
-                            />
-                            <VStack align="start" flex={1} spacing={2} width="100%">
-                              <HStack spacing={2} width="100%" justify="space-between">
-                                <HStack spacing={2}>
-                                  <Text fontSize="sm" fontWeight="bold" color="whiteAlpha.900">
-                                    {message.role === 'assistant' ? 'AI Assistant' : 'You'}
-                                  </Text>
-                                  <Text fontSize="xs" color="whiteAlpha.600">
-                                    {new Date().toLocaleTimeString()}
-                                  </Text>
-                                </HStack>
-                                {message.role === 'assistant' && (
-                                  <IconButton
-                                    aria-label={isMessageSaved(message.content) ? "Unsave message" : "Save message"}
-                                    icon={<Icon as={isMessageSaved(message.content) ? BsBookmarkFill : BsBookmark} />}
-                                    size="sm"
-                                    variant="ghost"
-                                    color="#CDF683"
-                                    _hover={{
-                                      bg: "rgba(205, 246, 131, 0.1)",
-                                      transform: "scale(1.1)"
-                                    }}
-                                    onClick={() => handleSaveMessage(message.content)}
-                                    transition="all 0.2s"
-                                  />
-                                )}
-                              </HStack>
-                              <Text 
-                                color="whiteAlpha.900" 
-                                fontSize="md" 
-                                width="100%"
-                                whiteSpace="pre-wrap"
-                                sx={{
-                                  overflowWrap: 'break-word',
-                                  wordBreak: 'break-word'
-                                }}
-                              >
-                                {message.content}
-                              </Text>
-                            </VStack>
-                          </HStack>
+                    {/* Glassy Background Card */}
+                    <Box
+                      position="absolute"
+                      top={-8}
+                      left={{ base: -8, md: -16 }}
+                      right={{ base: -8, md: -16 }}
+                      bottom={-25}
+                      bg="rgba(0, 0, 0, 0.3)"
+                      borderRadius="2xl"
+                      borderWidth="1px"
+                      borderColor="whiteAlpha.100"
+                      backdropFilter="blur(10px)"
+                      boxShadow="dark-lg"
+                      overflow="hidden"
+                      zIndex={0}
+                    />
+                    
+                    {/* Chat Content */}
+                    <Flex
+                      direction="column"
+                      flex="1"
+                      p={{ base: 6, md: 6 }}
+                      position="relative"
+                      zIndex={1}
+                      w="100%"
+                    >
+                      <VStack spacing={6} w="100%" align="stretch">
+                        {/* Back Button and Messages */}
+                        <Box w="100%" mb={2}>
+                          <Button
+                            leftIcon={<Icon as={BsArrowLeft} />}
+                            variant="ghost"
+                            color="#CDF683"
+                            onClick={handleBackToHome}
+                            _hover={{
+                              bg: "rgba(205, 246, 131, 0.1)",
+                              transform: "translateX(-5px)"
+                            }}
+                            transition="all 0.3s"
+                            position="relative"
+                            pl={4}
+                            pr={6}
+                            borderRadius="full"
+                            bgGradient="linear(to-r, rgba(205, 246, 131, 0.1), transparent)"
+                            float="right"
+                          >
+                            Back
+                          </Button>
                         </Box>
-                      ))}
-                      
-                      {/* AI Typing Indicator */}
-                      {isLoading && (
-                        <Box position="relative" w="100%" h="2px" mt={4}>
+                        
+                        {messages.map((message, index) => (
                           <Box
-                            position="absolute"
-                            h="2px"
-                            bg="#CDF683"
-                            animation={loadingLineAnimation}
-                          />
-                        </Box>
-                      )}
-                      <div ref={messagesEndRef} />
-                    </VStack>
-                  </Flex>
+                            key={index}
+                            p={6}
+                            bgGradient={
+                              message.role === 'assistant'
+                                ? "linear(to-r, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2))"
+                                : "linear(to-r, rgba(205, 246, 131, 0.15), rgba(205, 246, 131, 0.1))"
+                            }
+                            borderRadius="lg"
+                            borderWidth="1px"
+                            borderColor={message.role === 'assistant' ? "whiteAlpha.100" : "#CDF683"}
+                            width="100%"
+                            maxW="100%"
+                            mx="auto"
+                            mb={4}
+                            backdropFilter="blur(8px)"
+                            boxShadow="lg"
+                            _hover={{
+                              transform: "translateY(-2px)",
+                              boxShadow: "xl",
+                            }}
+                            transition="all 0.2s"
+                          >
+                            <HStack spacing={4} align="start" width="100%">
+                              <Avatar
+                                size="sm"
+                                icon={message.role === 'assistant' ? <FaRobot /> : <FaUser />}
+                                bg={message.role === 'assistant' ? "green.500" : "blue.500"}
+                              />
+                              <VStack align="start" flex={1} spacing={2} width="100%">
+                                <HStack spacing={2} width="100%" justify="space-between">
+                                  <HStack spacing={2}>
+                                    <Text fontSize="sm" fontWeight="bold" color="whiteAlpha.900">
+                                      {message.role === 'assistant' ? 'AI Assistant' : 'You'}
+                                    </Text>
+                                    <Text fontSize="xs" color="whiteAlpha.600">
+                                      {new Date().toLocaleTimeString()}
+                                    </Text>
+                                  </HStack>
+                                  {message.role === 'assistant' && (
+                                    <IconButton
+                                      aria-label={isMessageSaved(message.content) ? "Unsave message" : "Save message"}
+                                      icon={<Icon as={isMessageSaved(message.content) ? BsBookmarkFill : BsBookmark} />}
+                                      size="sm"
+                                      variant="ghost"
+                                      color="#CDF683"
+                                      _hover={{
+                                        bg: "rgba(205, 246, 131, 0.1)",
+                                        transform: "scale(1.1)"
+                                      }}
+                                      onClick={() => handleSaveMessage(message.content)}
+                                      transition="all 0.2s"
+                                    />
+                                  )}
+                                </HStack>
+                                <Text 
+                                  color="whiteAlpha.900" 
+                                  fontSize="md" 
+                                  width="100%"
+                                  whiteSpace="pre-wrap"
+                                  sx={{
+                                    overflowWrap: 'break-word',
+                                    wordBreak: 'break-word'
+                                  }}
+                                >
+                                  {message.content}
+                                </Text>
+                              </VStack>
+                            </HStack>
+                          </Box>
+                        ))}
+                        
+                        {/* AI Typing Indicator */}
+                        {isLoading && (
+                          <Box position="relative" w="100%" h="2px" mt={4}>
+                            <Box
+                              position="absolute"
+                              h="2px"
+                              bg="#CDF683"
+                              animation={loadingLineAnimation}
+                            />
+                          </Box>
+                        )}
+                        <div ref={messagesEndRef} />
+                      </VStack>
+                    </Flex>
+                  </Box>
                 </VStack>
               )}
             </VStack>
@@ -1258,7 +1204,7 @@ const TreeChat: React.FC = () => {
 
       {/* Add padding at the bottom to prevent content from being hidden behind input */}
       <Box pb={{ base: "80px", md: "100px" }} />
-    </Box>
+    </MotionBox>
   );
 };
 
