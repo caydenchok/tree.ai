@@ -8,7 +8,7 @@ import TechTreeBackground from '../components/common/TechTreeBackground/TechTree
 import { keyframes } from '@emotion/react';
 import { FaUser, FaRobot, FaFileUpload, FaCamera, FaPaperPlane, FaCrown } from 'react-icons/fa';
 import chatService, { Message } from '../services/chatService';
-import { ClaudeService } from '../../../ai/src/services/claudeService';
+import { ChatInput } from '../components/tree-chat/ChatInput';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -77,8 +77,6 @@ const TreeChat: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showSavedMessages, setShowSavedMessages] = useState(false);
   const [showMobileCards, setShowMobileCards] = useState(false);
-  const [mode, setMode] = useState<'chat' | 'essay' | 'research' | 'summary' | 'analysis'>('chat');
-  const claudeService = new ClaudeService(import.meta.env.VITE_CLAUDE_API_KEY || '');
 
   const handleBackToHome = () => {
     setShowWelcome(true);
@@ -127,40 +125,44 @@ const TreeChat: React.FC = () => {
     { icon: BsPeople, text: "Learn about any topic or field" }
   ];
 
-  const popularTopics = [
+  const aiFeatures = [
     {
       id: 1,
-      title: "How to make pasta carbonara? ",
-      icon: FiClock,
-      gradient: "linear(to-r, #FF6B6B, #FF8E8E)"
+      title: "Academic Assistant",
+      description: "Get help with homework, research, and study materials",
+      icon: "📚",
+      gradient: "linear(to-r, #4FACFE, #00F2FE)",
+      titleColor: "gray.800",
+      actions: ["Explain concepts", "Solve problems", "Create study guides"]
     },
     {
       id: 2,
-      title: "Best places to visit in Japan ",
-      icon: FiClock,
-      gradient: "linear(to-r, #4FACFE, #00F2FE)"
+      title: "Code Companion",
+      description: "Your programming and development partner",
+      icon: "💻",
+      gradient: "linear(to-r, #43E97B, #38F9D7)",
+      titleColor: "gray.900",
+      actions: ["Debug code", "Explain algorithms", "Suggest improvements"]
     },
     {
       id: 3,
-      title: "How to start working out at home? ",
-      icon: FiClock,
-      gradient: "linear(to-r, #43E97B, #38F9D7)"
+      title: "Writing Assistant",
+      description: "Perfect your writing and communication",
+      icon: "✍️",
+      gradient: "linear(to-r, #FA709A, #FEE140)",
+      titleColor: "gray.800",
+      actions: ["Grammar check", "Style suggestions", "Content organization"]
     },
     {
       id: 4,
-      title: "Tips for better sleep ",
-      icon: FiClock,
-      gradient: "linear(to-r, #FA709A, #FEE140)"
+      title: "Research Helper",
+      description: "Analyze data and find information efficiently",
+      icon: "🔍",
+      gradient: "linear(to-r, #764BA2, #667EEA)",
+      titleColor: "gray.900",
+      actions: ["Data analysis", "Research summaries", "Source verification"]
     }
   ];
-
-  const limeGreenColors = {
-    primary: "#CDF683",
-    darker: "#65a234",
-    lighter: "#9ed368",
-    gradient: 'linear-gradient(135deg, #CDF683 0%, #65a234 100%)',
-    glowShadow: '0 4px 20px rgba(130, 205, 71, 0.3)',
-  };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -266,20 +268,8 @@ const TreeChat: React.FC = () => {
       scrollToBottom();
 
       // Get response from API
-      let response;
-      if (mode === 'chat') {
-        response = await claudeService.chat([...messages, userMessage]);
-      } else {
-        response = await claudeService.generateContent(inputValue, mode);
-      }
-
-      const assistantMessage = {
-        role: 'assistant',
-        content: response.content,
-        timestamp: new Date().toISOString(),
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
+      const response = await chatService.sendMessage(userMessage.content);
+      setMessages(prev => [...prev, response]);
       
       // Scroll after AI response
       scrollToBottom();
@@ -450,120 +440,6 @@ const TreeChat: React.FC = () => {
     });
   };
 
-  const handleModeChange = (newMode: typeof mode) => {
-    setMode(newMode);
-    setMessages([]); // Clear chat when changing modes
-  };
-
-  const modeDescriptions = {
-    chat: "Have a natural conversation with Tree AI about any topic",
-    essay: "Get help writing well-structured essays with proper formatting",
-    research: "Get research assistance with citations and evidence-based analysis",
-    summary: "Create clear, concise summaries of any text or content",
-    analysis: "Receive in-depth analysis and critical evaluation"
-  };
-
-  const WelcomeContent = () => (
-    <Box textAlign="center" mb={2}>
-      <Badge
-        colorScheme="green"
-        p={2}
-        borderRadius="full"
-        textTransform="none"
-        mb={4}
-      >
-        {mode !== 'chat' ? `Mode: ${mode.charAt(0).toUpperCase() + mode.slice(1)}` : 'General Chat'}
-      </Badge>
-      <Text fontSize="lg" color="whiteAlpha.900" mb={2}>
-        {modeDescriptions[mode]}
-      </Text>
-      {mode !== 'chat' && (
-        <Text fontSize="sm" color="whiteAlpha.700">
-          Switch modes using the menu in the top right
-        </Text>
-      )}
-      <Flex 
-        align="center" 
-        gap={2}
-        direction="column"
-      >
-        <Box as="span" color="#CDF683">✧</Box>
-        <Heading 
-          color="white" 
-          fontSize="3xl" 
-          textAlign="center"
-        >
-          {getGreeting()}
-        </Heading>
-        <Text 
-          color="whiteAlpha.800" 
-          fontSize="lg"
-          textAlign="center"
-        >
-          {getLateNightMessage()}
-        </Text>
-      </Flex>
-
-      {/* Popular Topics Card - Mobile Only */}
-      <Box display={{ base: 'block', md: 'none' }} w="100%" px={4} mt={2}>
-        <Card
-          bg="whiteAlpha.50"
-          borderColor="whiteAlpha.200"
-          borderWidth={1}
-          _hover={{ 
-            transform: "translateY(-2px)",
-            boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
-          }}
-          transition="all 0.2s"
-          w="100%"
-        >
-          <CardBody>
-            <VStack align="start" spacing={4}>
-              <HStack color="#CDF683">
-                <Icon as={FiClock} />
-                <Text fontWeight="bold">Popular Topics</Text>
-              </HStack>
-              <VStack align="stretch" spacing={2} w="100%">
-                {popularTopics.map((topic, index) => (
-                  <Box
-                    key={index}
-                    bg="whiteAlpha.50"
-                    borderRadius="lg"
-                    borderWidth="1px"
-                    borderColor="whiteAlpha.100"
-                    transition="all 0.2s"
-                    _hover={{
-                      bg: "whiteAlpha.100",
-                      borderColor: "whiteAlpha.200",
-                      transform: "translateX(4px)"
-                    }}
-                    cursor="pointer"
-                    onClick={() => setInputValue(`Tell me about ${topic.title}`)}
-                  >
-                    <HStack spacing={3} p={3}>
-                      <Icon 
-                        as={FiClock} 
-                        color="whiteAlpha.700" 
-                        boxSize={4}
-                      />
-                      <Text 
-                        fontSize="sm" 
-                        color="white"
-                        fontWeight="medium"
-                      >
-                        {topic.title}
-                      </Text>
-                    </HStack>
-                  </Box>
-                ))}
-              </VStack>
-            </VStack>
-          </CardBody>
-        </Card>
-      </Box>
-    </Box>
-  );
-
   const handleOpenMobileOverlay = () => {
     setShowMobileOverlay(true);
   };
@@ -678,7 +554,7 @@ const TreeChat: React.FC = () => {
                       </Button>
                     </HStack>
                     <SimpleGrid columns={1} spacing={4} w="100%">
-                      {recentChats.map((chat) => (
+                      {recentChats.slice(0, 1).map((chat) => (
                         <Box
                           key={chat.id}
                           p={4}
@@ -750,7 +626,7 @@ const TreeChat: React.FC = () => {
                       </Button>
                     </HStack>
                     <SimpleGrid columns={1} spacing={4} w="100%">
-                      {savedMessages.slice(0, 3).map((msg) => (
+                      {savedMessages.slice(0, 1).map((msg) => (
                         <Box
                           key={msg.id}
                           p={4}
@@ -796,8 +672,7 @@ const TreeChat: React.FC = () => {
         <Container maxW="container.xl" pt={{ base: 4, md: 6 }}>
           <Flex direction="column" minH="calc(100vh - 80px)">
             <VStack spacing={6} flex="1" w="100%" position="relative">
-              {showWelcome ? (
-                // Welcome screen content
+              {showWelcome && (
                 <VStack spacing={8} w="100%" pt={{ base: 8, md: 12 }}>
                   {/* Badge and Greeting */}
                   <VStack 
@@ -854,6 +729,7 @@ const TreeChat: React.FC = () => {
                         </Box>
                       </HStack>
                     </Button>
+
                     <Badge
                       colorScheme="green"
                       variant="subtle"
@@ -906,70 +782,72 @@ const TreeChat: React.FC = () => {
 
                   {/* Desktop Cards Layout */}
                   <Box display={{ base: 'none', md: 'block' }} w="100%" px={4}>
-                    {/* Recent Chats - Full Width */}
-                    <Card
-                      bg="whiteAlpha.50"
-                      borderColor="whiteAlpha.200"
-                      borderWidth={1}
-                      mb={6}
-                      _hover={{ 
-                        transform: "translateY(-2px)",
-                        boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
-                      }}
-                      transition="all 0.2s"
-                      w="100%"
-                    >
-                      <CardBody>
-                        <VStack align="start" spacing={4}>
-                          <HStack justify="space-between" width="100%">
-                            <HStack color="#CDF683">
-                              <Icon as={FiClock} />
-                              <Text fontWeight="bold">Recent Chats</Text>
-                            </HStack>
-                            <Button
-                              onClick={onRecentChatsOpen}
-                              variant="ghost"
-                              size="sm"
-                              color="#CDF683"
-                              _hover={{
-                                bg: "rgba(205, 246, 131, 0.1)",
-                              }}
-                            >
-                              View All
-                            </Button>
-                          </HStack>
-                          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} w="100%">
-                            {recentChats.map((chat) => (
-                              <Box
-                                key={chat.id}
-                                p={4}
-                                bg="whiteAlpha.50"
-                                borderRadius="lg"
-                                borderWidth="1px"
-                                borderColor="whiteAlpha.200"
-                                cursor="pointer"
-                                onClick={() => setShowWelcome(false)}
+                    {/* Two Column Layout for Recent Chats and Saved Messages */}
+                    <SimpleGrid columns={2} spacing={6} w="100%" mb={6} display={{ base: 'none', md: 'grid' }}>
+                      {/* Recent Chats Card */}
+                      <Card
+                        bg="whiteAlpha.50"
+                        borderColor="whiteAlpha.200"
+                        borderWidth={1}
+                        _hover={{ 
+                          transform: "translateY(-2px)",
+                          boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
+                        }}
+                        transition="all 0.2s"
+                      >
+                        <CardBody>
+                          <VStack align="start" spacing={4}>
+                            <HStack justify="space-between" width="100%">
+                              <HStack color="#CDF683">
+                                <Icon as={FiClock} />
+                                <Text fontWeight="bold">Recent Chats</Text>
+                              </HStack>
+                              <Button
+                                onClick={onRecentChatsOpen}
+                                variant="ghost"
+                                size="sm"
+                                color="#CDF683"
+                                _hover={{
+                                  bg: "rgba(205, 246, 131, 0.1)",
+                                }}
                               >
-                                <VStack align="start" spacing={2}>
-                                  <Text fontWeight="bold" color="white">
-                                    {chat.title}
-                                  </Text>
-                                  <Text fontSize="sm" color="whiteAlpha.700" noOfLines={2}>
-                                    {chat.preview}
-                                  </Text>
-                                  <Text fontSize="xs" color="whiteAlpha.600">
-                                    {chat.timestamp}
-                                  </Text>
-                                </VStack>
-                              </Box>
-                            ))}
-                          </SimpleGrid>
-                        </VStack>
-                      </CardBody>
-                    </Card>
+                                View All
+                              </Button>
+                            </HStack>
+                            <VStack align="stretch" spacing={3} w="100%">
+                              {recentChats.slice(0, 1).map((chat) => (
+                                <Box
+                                  key={chat.id}
+                                  p={3}
+                                  bg="whiteAlpha.50"
+                                  borderRadius="md"
+                                  borderWidth="1px"
+                                  borderColor="whiteAlpha.200"
+                                  cursor="pointer"
+                                  onClick={() => setShowWelcome(false)}
+                                  _hover={{
+                                    bg: "whiteAlpha.100",
+                                    borderColor: "#CDF683"
+                                  }}
+                                >
+                                  <VStack align="start" spacing={2}>
+                                    <Text fontWeight="bold" color="white">
+                                      {chat.title}
+                                    </Text>
+                                    <Text fontSize="sm" color="whiteAlpha.700" noOfLines={2}>
+                                      {chat.preview}
+                                    </Text>
+                                    <Text fontSize="xs" color="whiteAlpha.600">
+                                      {chat.timestamp}
+                                    </Text>
+                                  </VStack>
+                                </Box>
+                              ))}
+                            </VStack>
+                          </VStack>
+                        </CardBody>
+                      </Card>
 
-                    {/* Two Column Layout for Saved Messages and Popular Topics */}
-                    <SimpleGrid columns={2} spacing={6} w="100%">
                       {/* Saved Messages Card */}
                       <Card
                         bg="whiteAlpha.50"
@@ -1001,7 +879,7 @@ const TreeChat: React.FC = () => {
                               </Button>
                             </HStack>
                             <VStack align="stretch" spacing={3} w="100%">
-                              {savedMessages.slice(0, 3).map((msg) => (
+                              {savedMessages.slice(0, 1).map((msg) => (
                                 <Box
                                   key={msg.id}
                                   p={3}
@@ -1020,18 +898,22 @@ const TreeChat: React.FC = () => {
                                     onSavedMessageOpen();
                                   }}
                                 >
-                                  <VStack align="start" spacing={1}>
+                                  <VStack align="start" spacing={2}>
+                                    <Text color="white" noOfLines={2}>
+                                      {msg.content}
+                                    </Text>
                                     <HStack justify="space-between" width="100%">
-                                      <Text fontSize="sm" fontWeight="bold" color="white">
+                                      <Badge
+                                        colorScheme="green"
+                                        bg="rgba(205, 246, 131, 0.1)"
+                                        color="#CDF683"
+                                      >
                                         {msg.topic}
-                                      </Text>
+                                      </Badge>
                                       <Text fontSize="xs" color="whiteAlpha.600">
                                         {msg.timestamp}
                                       </Text>
                                     </HStack>
-                                    <Text fontSize="sm" color="whiteAlpha.800" noOfLines={2}>
-                                      {msg.content}
-                                    </Text>
                                   </VStack>
                                 </Box>
                               ))}
@@ -1039,66 +921,84 @@ const TreeChat: React.FC = () => {
                           </VStack>
                         </CardBody>
                       </Card>
+                    </SimpleGrid>
 
-                      {/* Popular Topics Card */}
-                      <Card
-                        bg="whiteAlpha.50"
-                        borderColor="whiteAlpha.200"
-                        borderWidth={1}
-                        _hover={{ 
-                          transform: "translateY(-2px)",
-                          boxShadow: "0 4px 12px rgba(205, 246, 131, 0.15)"
-                        }}
-                        transition="all 0.2s"
-                      >
-                        <CardBody>
-                          <VStack align="start" spacing={4}>
-                            <HStack color="#CDF683">
-                              <Icon as={FiClock} />
-                              <Text fontWeight="bold">Popular Topics</Text>
-                            </HStack>
-                            <VStack align="stretch" spacing={2} w="100%">
-                              {popularTopics.map((topic, index) => (
-                                <Box
-                                  key={index}
-                                  bg="whiteAlpha.50"
-                                  borderRadius="lg"
-                                  borderWidth="1px"
-                                  borderColor="whiteAlpha.100"
-                                  transition="all 0.2s"
-                                  _hover={{
-                                    bg: "whiteAlpha.100",
-                                    borderColor: "whiteAlpha.200",
-                                    transform: "translateX(4px)"
-                                  }}
-                                  cursor="pointer"
-                                  onClick={() => setInputValue(`Tell me about ${topic.title}`)}
-                                >
-                                  <HStack spacing={3} p={3}>
-                                    <Icon 
-                                      as={FiClock} 
-                                      color="whiteAlpha.700" 
-                                      boxSize={4}
-                                    />
-                                    <Text 
-                                      fontSize="sm" 
-                                      color="white"
-                                      fontWeight="medium"
-                                    >
-                                      {topic.title}
-                                    </Text>
-                                  </HStack>
-                                </Box>
-                              ))}
+                    {/* AI Features */}
+                    <SimpleGrid 
+                      columns={{ base: 1, md: 2 }} 
+                      spacing={4}
+                      display={{ base: 'none', md: 'grid' }}
+                    >
+                      {aiFeatures.map((feature) => (
+                        <MotionCard
+                          key={feature.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5 }}
+                          bgGradient={feature.gradient}
+                          borderRadius="xl"
+                          overflow="hidden"
+                          _hover={{ transform: 'translateY(-5px)' }}
+                        >
+                          <CardBody>
+                            <VStack align="start" spacing={4}>
+                              <HStack spacing={3}>
+                                <Text fontSize="2xl">{feature.icon}</Text>
+                                <Heading size="md" color={feature.titleColor} fontWeight="bold">
+                                  {feature.title}
+                                </Heading>
+                              </HStack>
+                              <Text color="gray.800">
+                                {feature.description}
+                              </Text>
+                              <SimpleGrid columns={2} spacing={2} w="full">
+                                {feature.actions.map((action, idx) => (
+                                  <Badge
+                                    key={idx}
+                                    bg="whiteAlpha.200"
+                                    color="white"
+                                    px={3}
+                                    py={1}
+                                    borderRadius="full"
+                                    fontSize="sm"
+                                  >
+                                    {action}
+                                  </Badge>
+                                ))}
+                              </SimpleGrid>
                             </VStack>
-                          </VStack>
-                        </CardBody>
-                      </Card>
+                          </CardBody>
+                        </MotionCard>
+                      ))}
                     </SimpleGrid>
                   </Box>
 
+                  {/* Mobile Cards Layout */}
+                  <Box display={{ base: 'block', md: 'none' }} w="100%" px={4} position="fixed" top="0" right="0" p={4} zIndex={2}>
+                    <VStack spacing={4} align="flex-end">
+                      <HStack spacing={2}>
+                        <IconButton
+                          aria-label="Recent Chats"
+                          icon={<BsClock />}
+                          onClick={() => setShowMobileCards(true)}
+                          variant="solid"
+                          colorScheme="whiteAlpha"
+                          size="sm"
+                        />
+                        <IconButton
+                          aria-label="Saved Messages"
+                          icon={<BsBookmark />}
+                          onClick={() => setShowSavedMessages(true)}
+                          variant="solid"
+                          colorScheme="whiteAlpha"
+                          size="sm"
+                        />
+                      </HStack>
+                    </VStack>
+                  </Box>
                 </VStack>
-              ) : (
+              )}
+              {!showWelcome && (
                 // Chat screen content
                 <VStack spacing={4} align="stretch" width="100%" position="relative">
                   {/* Back button and menu button container */}
@@ -1274,93 +1174,14 @@ const TreeChat: React.FC = () => {
               bottom={0}
               left={0}
               right={0}
-              p={4}
-              bg="rgba(0, 0, 0, 0.3)"
-              backdropFilter="blur(10px)"
-              borderTop="1px solid"
-              borderColor="whiteAlpha.200"
               zIndex={1000}
             >
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  icon={<BsThreeDots />}
-                  variant="ghost"
-                  color="white"
-                  position="absolute"
-                  top={4}
-                  right={4}
-                />
-                <MenuList bg="gray.800" borderColor="whiteAlpha.200">
-                  <MenuItem onClick={() => handleModeChange('chat')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
-                    General Chat
-                  </MenuItem>
-                  <MenuItem onClick={() => handleModeChange('essay')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
-                    Essay Writing
-                  </MenuItem>
-                  <MenuItem onClick={() => handleModeChange('research')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
-                    Research Assistant
-                  </MenuItem>
-                  <MenuItem onClick={() => handleModeChange('summary')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
-                    Summarization
-                  </MenuItem>
-                  <MenuItem onClick={() => handleModeChange('analysis')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
-                    Critical Analysis
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-              <InputGroup>
-                <Input
-                  placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}
-                  bg="whiteAlpha.100"
-                  border="none"
-                  _hover={{ bg: "whiteAlpha.200" }}
-                  _focus={{ bg: "whiteAlpha.200", boxShadow: "none" }}
-                  color="white"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  pr="120px"
-                />
-                <InputRightElement width="auto" pr={2}>
-                  <HStack spacing={1}>
-                    <IconButton
-                      aria-label="Upload file"
-                      icon={<BsUpload size={22} />}
-                      variant="ghost"
-                      color="#CDF683"
-                      size="sm"
-                      _hover={{ bg: "whiteAlpha.200" }}
-                    />
-                    <IconButton
-                      aria-label="Take photo"
-                      icon={<BsCamera size={22} />}
-                      variant="ghost"
-                      color="#CDF683"
-                      size="sm"
-                      _hover={{ bg: "whiteAlpha.200" }}
-                    />
-                    {inputValue.trim() && (
-                      <IconButton
-                        aria-label="Send message"
-                        icon={<BsSend size={22} />}
-                        size="md"
-                        bg="#CDF683"
-                        color="black"
-                        onClick={handleSendMessage}
-                        _hover={{ bg: "#bef55f" }}
-                        h="40px"
-                        w="40px"
-                      />
-                    )}
-                  </HStack>
-                </InputRightElement>
-              </InputGroup>
+              <ChatInput
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                handleSendMessage={handleSendMessage}
+                isLoading={isLoading}
+              />
             </Box>
           </Flex>
         </Container>
