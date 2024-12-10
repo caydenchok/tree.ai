@@ -8,6 +8,7 @@ import TechTreeBackground from '../components/common/TechTreeBackground/TechTree
 import { keyframes } from '@emotion/react';
 import { FaUser, FaRobot, FaFileUpload, FaCamera, FaPaperPlane, FaCrown } from 'react-icons/fa';
 import chatService, { Message } from '../services/chatService';
+import { ClaudeService } from '../../../ai/src/services/claudeService';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -76,6 +77,8 @@ const TreeChat: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showSavedMessages, setShowSavedMessages] = useState(false);
   const [showMobileCards, setShowMobileCards] = useState(false);
+  const [mode, setMode] = useState<'chat' | 'essay' | 'research' | 'summary' | 'analysis'>('chat');
+  const claudeService = new ClaudeService(import.meta.env.VITE_CLAUDE_API_KEY || '');
 
   const handleBackToHome = () => {
     setShowWelcome(true);
@@ -263,8 +266,20 @@ const TreeChat: React.FC = () => {
       scrollToBottom();
 
       // Get response from API
-      const response = await chatService.sendMessage(userMessage.content);
-      setMessages(prev => [...prev, response]);
+      let response;
+      if (mode === 'chat') {
+        response = await claudeService.chat([...messages, userMessage]);
+      } else {
+        response = await claudeService.generateContent(inputValue, mode);
+      }
+
+      const assistantMessage = {
+        role: 'assistant',
+        content: response.content,
+        timestamp: new Date().toISOString(),
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
       
       // Scroll after AI response
       scrollToBottom();
@@ -435,35 +450,38 @@ const TreeChat: React.FC = () => {
     });
   };
 
+  const handleModeChange = (newMode: typeof mode) => {
+    setMode(newMode);
+    setMessages([]); // Clear chat when changing modes
+  };
+
+  const modeDescriptions = {
+    chat: "Have a natural conversation with Tree AI about any topic",
+    essay: "Get help writing well-structured essays with proper formatting",
+    research: "Get research assistance with citations and evidence-based analysis",
+    summary: "Create clear, concise summaries of any text or content",
+    analysis: "Receive in-depth analysis and critical evaluation"
+  };
+
   const WelcomeContent = () => (
     <Box textAlign="center" mb={2}>
       <Badge
         colorScheme="green"
-        variant="subtle"
-        px={3}
-        py={1}
+        p={2}
         borderRadius="full"
-        display="flex"
-        alignItems="center"
-        gap={2}
-        fontSize="sm"
-        bg="rgba(255, 255, 255, 0.03)"
-        color="#CDF683"
-        borderWidth={1}
-        borderColor="#CDF683"
-        cursor="pointer"
-        transition="all 0.2s"
-        _hover={{
-          bg: "rgba(255, 255, 255, 0.06)",
-          transform: "translateY(-1px)",
-          boxShadow: "0 4px 20px rgba(130, 205, 71, 0.3)"
-        }}
-        onClick={() => {/* Handle upgrade click */}}
+        textTransform="none"
+        mb={4}
       >
-        <Icon as={FaCrown} />
-        Using limited free plan • Upgrade
+        {mode !== 'chat' ? `Mode: ${mode.charAt(0).toUpperCase() + mode.slice(1)}` : 'General Chat'}
       </Badge>
-      
+      <Text fontSize="lg" color="whiteAlpha.900" mb={2}>
+        {modeDescriptions[mode]}
+      </Text>
+      {mode !== 'chat' && (
+        <Text fontSize="sm" color="whiteAlpha.700">
+          Switch modes using the menu in the top right
+        </Text>
+      )}
       <Flex 
         align="center" 
         gap={2}
@@ -1263,6 +1281,34 @@ const TreeChat: React.FC = () => {
               borderColor="whiteAlpha.200"
               zIndex={1000}
             >
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<BsThreeDots />}
+                  variant="ghost"
+                  color="white"
+                  position="absolute"
+                  top={4}
+                  right={4}
+                />
+                <MenuList bg="gray.800" borderColor="whiteAlpha.200">
+                  <MenuItem onClick={() => handleModeChange('chat')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
+                    General Chat
+                  </MenuItem>
+                  <MenuItem onClick={() => handleModeChange('essay')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
+                    Essay Writing
+                  </MenuItem>
+                  <MenuItem onClick={() => handleModeChange('research')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
+                    Research Assistant
+                  </MenuItem>
+                  <MenuItem onClick={() => handleModeChange('summary')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
+                    Summarization
+                  </MenuItem>
+                  <MenuItem onClick={() => handleModeChange('analysis')} color="white" _hover={{ bg: 'whiteAlpha.200' }}>
+                    Critical Analysis
+                  </MenuItem>
+                </MenuList>
+              </Menu>
               <InputGroup>
                 <Input
                   placeholder={isRateLimited ? `Please wait ${formatTimeRemaining(rateLimitEndTime!)}...` : "How can Tree AI help you today?"}

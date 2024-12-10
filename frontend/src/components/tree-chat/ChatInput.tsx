@@ -1,78 +1,149 @@
-import { Box, InputGroup, Input, InputRightElement, IconButton, Icon } from '@chakra-ui/react';
-import { BsSend } from 'react-icons/bs';
+import { Box, HStack, Input, IconButton, Tooltip, useToast } from '@chakra-ui/react';
+import { FiSend, FiMic, FiPaperclip, FiEdit, FiBook, FiFileText, FiClipboard } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+
+const MotionBox = motion(Box);
 
 interface ChatInputProps {
-  inputValue: string;
-  setInputValue: (value: string) => void;
-  handleSendMessage: () => void;
-  isLoading: boolean;
+  value: string;
+  onChange: (value: string) => void;
+  onSend: () => void;
+  onVoice?: () => void;
+  onAttachment?: () => void;
+  isLoading?: boolean;
+  mode: 'chat' | 'essay' | 'research' | 'summary' | 'analysis';
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
-  inputValue,
-  setInputValue,
-  handleSendMessage,
-  isLoading
+  value,
+  onChange,
+  onSend,
+  onVoice,
+  onAttachment,
+  isLoading,
+  mode
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      handleSendMessage();
+      onSend();
     }
   };
 
   return (
-    <Box
-      position="fixed"
-      bottom={7}
-      left={0}
-      right={0}
-      px={4}
-      zIndex={2}
+    <MotionBox
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.2 }}
     >
       <Box
-        mx="auto"
-        maxW="5xl"
+        p={4}
+        borderTop="1px solid"
+        borderColor="whiteAlpha.200"
         bg="rgba(0, 0, 0, 0.3)"
         backdropFilter="blur(10px)"
-        borderRadius="2xl"
-        p={4}
-        borderWidth="1px"
-        borderColor="whiteAlpha.200"
       >
-        <InputGroup size="lg">
+        <HStack spacing={2}>
+          {/* Mode-specific action buttons */}
+          {mode !== 'chat' && (
+            <Tooltip label={`${mode.charAt(0).toUpperCase() + mode.slice(1)} mode active`} placement="top">
+              <IconButton
+                aria-label="Current mode"
+                icon={
+                  mode === 'essay' ? <FiEdit /> :
+                  mode === 'research' ? <FiBook /> :
+                  mode === 'summary' ? <FiFileText /> :
+                  <FiClipboard />
+                }
+                variant="ghost"
+                colorScheme="green"
+                size="lg"
+                isDisabled={true}
+                _hover={{ bg: "whiteAlpha.200" }}
+              />
+            </Tooltip>
+          )}
+
           <Input
-            placeholder="Type your message..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
             onKeyPress={handleKeyPress}
-            bg="whiteAlpha.50"
-            border="none"
-            _focus={{
-              boxShadow: "none",
-              bg: "whiteAlpha.100"
-            }}
+            placeholder={
+              mode === 'chat' ? "Type your message..." :
+              mode === 'essay' ? "Enter your essay topic or content..." :
+              mode === 'research' ? "Enter your research query..." :
+              mode === 'summary' ? "Paste the text to summarize..." :
+              "Enter text for analysis..."
+            }
+            size="lg"
+            bg="whiteAlpha.100"
+            border="1px solid"
+            borderColor="whiteAlpha.200"
             _hover={{
-              bg: "whiteAlpha.100"
+              borderColor: "whiteAlpha.300",
+              bg: "whiteAlpha.200"
+            }}
+            _focus={{
+              borderColor: "#cdf683",
+              boxShadow: "0 0 0 1px #cdf683"
             }}
             color="white"
-            disabled={isLoading}
+            _placeholder={{ color: "whiteAlpha.500" }}
           />
-          <InputRightElement>
+          
+          {onAttachment && (
+            <Tooltip label="Attach file" placement="top">
+              <IconButton
+                aria-label="Attach file"
+                icon={<FiPaperclip />}
+                onClick={onAttachment}
+                variant="ghost"
+                colorScheme="green"
+                size="lg"
+                isDisabled={isLoading}
+                _hover={{
+                  bg: "whiteAlpha.200"
+                }}
+              />
+            </Tooltip>
+          )}
+          
+          {onVoice && (
+            <Tooltip label="Voice input" placement="top">
+              <IconButton
+                aria-label="Voice input"
+                icon={<FiMic />}
+                onClick={onVoice}
+                variant="ghost"
+                colorScheme="green"
+                size="lg"
+                isDisabled={isLoading}
+                _hover={{
+                  bg: "whiteAlpha.200"
+                }}
+              />
+            </Tooltip>
+          )}
+          
+          <Tooltip label="Send message" placement="top">
             <IconButton
               aria-label="Send message"
-              icon={<Icon as={BsSend} />}
-              size="sm"
-              variant="ghost"
-              color="#CDF683"
-              _hover={{ bg: "rgba(205, 246, 131, 0.1)" }}
+              icon={<FiSend />}
+              onClick={onSend}
+              colorScheme="green"
+              size="lg"
               isLoading={isLoading}
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isLoading}
+              isDisabled={!value.trim()}
+              _hover={{
+                transform: "translateY(-2px)",
+                shadow: "lg"
+              }}
+              transition="all 0.2s"
             />
-          </InputRightElement>
-        </InputGroup>
+          </Tooltip>
+        </HStack>
       </Box>
-    </Box>
+    </MotionBox>
   );
 };
