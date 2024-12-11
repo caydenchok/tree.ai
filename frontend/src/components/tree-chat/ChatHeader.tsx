@@ -11,14 +11,19 @@ export const ChatHeader = ({ showWelcome, handleBackToHome, onModalOpen }: ChatH
   return (
     <HStack
       position="fixed"
-      top={0}
+      top="env(safe-area-inset-top)"
       left={0}
       right={0}
       p={4}
+      pt="max(env(safe-area-inset-top), 16px)"
+      pb={4}
+      px="max(env(safe-area-inset-left), 16px)"
       zIndex={15}
       justify="space-between"
       align="center"
       pointerEvents="auto"
+      bg="rgba(0, 0, 0, 0.5)"
+      backdropFilter="blur(10px)"
     >
       {/* Left side - Back button for chat interface */}
       <Box>

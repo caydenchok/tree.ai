@@ -100,10 +100,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <Box
       position="fixed"
-      bottom={3}
+      bottom="env(safe-area-inset-bottom)"
       left={0}
       right={0}
       px={{ base: 2, md: 4 }}
+      pb="max(env(safe-area-inset-bottom), 12px)"
+      pt={3}
       zIndex={2}
     >
       <Container maxW={{ base: "100%", md: "72%" }}>
