@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, Flex, Icon } from '@chakra-ui/react';
+import { FaBrain } from 'react-icons/fa';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SidebarProvider } from './contexts/SidebarContext';
@@ -297,13 +298,47 @@ const LoadingFallback = () => (
   <Box
     minH="100vh"
     display="flex"
+    flexDirection="column"
     alignItems="center"
     justifyContent="center"
     bg="brand.dark.primary"
     color="brand.primary"
     style={{ willChange: 'opacity' }}
   >
-    <Text fontSize="xl">Loading...</Text>
+    <Flex
+      alignItems="center"
+      gap={3}
+      mb={4}
+      bgGradient="linear(to-r, #CDF683, #B5E853)"
+      bgClip="text"
+      fontSize="2xl"
+      fontWeight="bold"
+      animation="pulse 2s infinite"
+    >
+      <Icon as={FaBrain} boxSize={8} />
+      <Text>Tree.AI</Text>
+    </Flex>
+    <Box
+      w="200px"
+      h="2px"
+      bgGradient="linear(to-r, #CDF683, #B5E853)"
+      opacity={0.3}
+      animation="loadingBar 2s infinite"
+    />
+    <style>
+      {`
+        @keyframes pulse {
+          0% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.05); }
+          100% { opacity: 0.6; transform: scale(1); }
+        }
+        @keyframes loadingBar {
+          0% { transform: scaleX(0); opacity: 0.1; }
+          50% { transform: scaleX(1); opacity: 0.3; }
+          100% { transform: scaleX(0); opacity: 0.1; }
+        }
+      `}
+    </style>
   </Box>
 );
 
