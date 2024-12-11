@@ -100,11 +100,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <Box
       position="fixed"
-      bottom="env(safe-area-inset-bottom)"
+      bottom={{ base: "16px", md: "env(safe-area-inset-bottom)" }}
       left={0}
       right={0}
       px={{ base: 2, md: 4 }}
-      pb="max(env(safe-area-inset-bottom), 12px)"
+      pb={{ base: "max(env(safe-area-inset-bottom), 16px)", md: "max(env(safe-area-inset-bottom), 12px)" }}
       pt={3}
       zIndex={2}
     >
