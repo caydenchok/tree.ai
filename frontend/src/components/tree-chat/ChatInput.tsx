@@ -1,6 +1,6 @@
 import { Box, InputGroup, Input, InputRightElement, IconButton, Icon, HStack, Menu, MenuButton, MenuList, MenuItem, Text, useColorModeValue, Container } from '@chakra-ui/react';
 import { BsSend, BsLightningCharge, BsUpload, BsCamera } from 'react-icons/bs';
-import { FaRobot, FaBrain, FaGraduationCap, FaCode, FaPencilAlt, FaChartLine } from 'react-icons/fa';
+import { FaRobot, FaBrain, FaGraduationCap, FaCode, FaPencilAlt, FaChartLine, FaGamepad, FaPaintBrush, FaBook } from 'react-icons/fa';
 
 export type ChatMode = {
   id: string;
@@ -12,9 +12,9 @@ export type ChatMode = {
 const chatModes: ChatMode[] = [
   {
     id: 'default',
-    name: 'Assistant',
+    name: 'General Chat',
     icon: FaRobot,
-    description: 'General-purpose AI assistant'
+    description: 'Versatile AI assistance for any topic'
   },
   {
     id: 'creative',
@@ -45,6 +45,24 @@ const chatModes: ChatMode[] = [
     name: 'Analyst',
     icon: FaChartLine,
     description: 'Focused on data analysis and insights'
+  },
+  {
+    id: 'gamer',
+    name: 'Gaming',
+    icon: FaGamepad,
+    description: 'Helps with game strategies and character builds'
+  },
+  {
+    id: 'designer',
+    name: 'Designer',
+    icon: FaPaintBrush,
+    description: 'Generate architectural & interior design images'
+  },
+  {
+    id: 'education',
+    name: 'Education',
+    icon: FaBook,
+    description: 'Interactive learning and study assistance'
   }
 ];
 
@@ -55,6 +73,8 @@ interface ChatInputProps {
   isLoading: boolean;
   selectedMode?: string;
   onModeChange?: (mode: string) => void;
+  onKeyPress?: (e: React.KeyboardEvent) => void;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -63,7 +83,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   handleSendMessage,
   isLoading,
   selectedMode = 'default',
-  onModeChange = () => {}
+  onModeChange = () => {},
+  onKeyPress,
+  inputRef
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -78,64 +100,75 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <Box
       position="fixed"
-      bottom={7}
+      bottom={3}
       left={0}
       right={0}
-      px={4}
+      px={{ base: 2, md: 4 }}
       zIndex={2}
     >
-      <Container maxW="7xl">
+      <Container maxW={{ base: "100%", md: "72%" }}>
         <Box
           mx="auto"
           bg="rgba(0, 0, 0, 0.3)"
           backdropFilter="blur(10px)"
           borderRadius="2xl"
-          p={4}
+          p={3}
           borderWidth="1px"
           borderColor="whiteAlpha.200"
+          maxW={{ base: "98%", md: "85%" }}
+          margin="0 auto"
         >
-          <HStack spacing={3}>
-            <InputGroup size="lg">
+          <HStack spacing={2}>
+            <InputGroup size="md">
               <Input
+                ref={inputRef}
                 placeholder="Type your message..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyPress={onKeyPress || handleKeyPress}
                 bg="whiteAlpha.50"
                 border="none"
                 _focus={{
                   boxShadow: 'none',
                   bg: 'whiteAlpha.100'
                 }}
+                _hover={{
+                  bg: 'whiteAlpha.100'
+                }}
                 color="white"
-                _placeholder={{ color: 'whiteAlpha.400' }}
-                pr="180px"
+                h="36px"
+                fontSize="sm"
+                pr="120px"
               />
-              <InputRightElement width="auto" pr={2}>
-                <HStack spacing={2}>
+              <InputRightElement width="auto" h="36px" pr={1}>
+                <HStack spacing={1}>
                   <IconButton
                     aria-label="Upload file"
-                    icon={<Icon as={BsUpload} boxSize={5} />}
+                    icon={<Icon as={BsUpload} boxSize={4} />}
                     variant="ghost"
                     color="#CDF683"
                     size="sm"
+                    h="32px"
+                    minW="32px"
                     _hover={{ bg: 'whiteAlpha.100' }}
                   />
                   <IconButton
                     aria-label="Take photo"
-                    icon={<Icon as={BsCamera} boxSize={5} />}
+                    icon={<Icon as={BsCamera} boxSize={4} />}
                     variant="ghost"
                     color="#CDF683"
                     size="sm"
+                    h="32px"
+                    minW="32px"
                     _hover={{ bg: 'whiteAlpha.100' }}
                   />
                   <IconButton
                     aria-label="Send message"
                     icon={isLoading ? 
                       <Icon as={BsLightningCharge} className="spin" /> : 
-                      <Icon as={BsSend} boxSize={4} />
+                      <Icon as={BsSend} boxSize={3.5} />
                     }
-                    size="md"
+                    size="sm"
                     bg="#CDF683"
                     color="black"
                     isLoading={isLoading}
@@ -152,8 +185,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     }}
                     transition="all 0.2s"
                     borderRadius="xl"
-                    w="42px"
-                    h="42px"
+                    w="36px"
+                    h="36px"
                     disabled={!inputValue.trim() || isLoading}
                   />
                 </HStack>
@@ -164,12 +197,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               <MenuButton
                 as={IconButton}
                 aria-label="Select mode"
-                icon={<Icon as={chatModes.find(mode => mode.id === selectedMode)?.icon || FaRobot} />}
+                icon={<Icon as={chatModes.find(mode => mode.id === selectedMode)?.icon || FaRobot} boxSize={4} />}
                 variant="ghost"
                 color="#CDF683"
                 _hover={{ bg: 'whiteAlpha.100' }}
                 _active={{ bg: 'whiteAlpha.200' }}
-                size="lg"
+                size="sm"
+                h="36px"
+                minW="36px"
               />
               <MenuList
                 bg="rgba(0, 0, 0, 0.8)"

@@ -53,7 +53,7 @@ const colors = {
 };
 
 const fonts = {
-  heading: "'Montserrat', 'SF Pro Display', system-ui, sans-serif",
+  heading: "'Space Grotesk', 'Montserrat', 'SF Pro Display', system-ui, sans-serif",
   body: "'Inter', 'SF Pro Text', system-ui, sans-serif",
   mono: "'SF Mono', 'JetBrains Mono', monospace",
 };
