@@ -158,6 +158,27 @@ Visit `http://localhost:5173` for the frontend and `http://localhost:3000` for t
 
 ## Features
 
+### TreeChat - AI-Powered Communication Platform
+TreeChat is a sophisticated AI chat platform available to the public, offering:
+- **General Chat**: Engage in natural conversations on any topic
+- **Quick Actions**: 
+  - Summarize study notes
+  - Generate practice questions
+  - Get instant homework help
+- **Smart Features**:
+  - Multi-mode conversations
+  - Chat history tracking
+  - Real-time responses
+  - Mobile-optimized interface
+- **Free Plan Available**:
+  - Access to basic chat features
+  - Upgradeable to premium for enhanced capabilities
+- **User-Friendly Interface**:
+  - Clean, modern design
+  - Fullscreen mobile experience
+  - Intuitive navigation
+  - Responsive layout for all devices
+
 ### Core Educational Features
 - Virtual Classroom with real-time interaction
 - AI-powered teaching assistance

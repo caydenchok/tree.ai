@@ -132,6 +132,32 @@ Our platform aims to provide personalized learning experiences for Malaysian stu
    - Behavioral analysis
    - Impact assessment
 
+## TreeChat Development Roadmap
+
+### Phase 1: Enhanced Chat Experience (Current)
+- [x] Implement fullscreen mobile experience
+- [x] Add quick action buttons for common tasks
+- [x] Integrate basic chat functionality
+- [x] Design responsive UI for all devices
+- [ ] Add voice input support
+- [ ] Implement code syntax highlighting
+
+### Phase 2: Advanced Features (Next)
+- [ ] Add file attachment support
+- [ ] Implement chat export functionality
+- [ ] Add collaborative document editing
+- [ ] Integrate real-time translation
+- [ ] Add custom chat themes
+- [ ] Implement chat bookmarking
+
+### Phase 3: Premium Features
+- [ ] Advanced AI models integration
+- [ ] Priority response times
+- [ ] Custom AI training
+- [ ] Extended chat history
+- [ ] Analytics dashboard
+- [ ] API access for developers
+
 ### Technical Roadmap
 
 1. **Q4 2023**
