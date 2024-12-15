@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "edu_001",
+      "content": "The scientific method is a systematic approach to investigation: 1) Ask a question 2) Form a hypothesis 3) Make a prediction 4) Test the prediction 5) Analyze results. This method is fundamental to all scientific research.",
+      "metadata": {
+        "category": "science",
+        "topic": "scientific_method",
+        "level": "intermediate"
+      }
+    },
+    {
+      "id": "edu_002",
+      "content": "Photosynthesis is the process by which plants convert light energy into chemical energy. The basic equation is: 6CO2 + 6H2O + light energy → C6H12O6 + 6O2. This process is essential for life on Earth.",
+      "metadata": {
+        "category": "biology",
+        "topic": "photosynthesis",
+        "level": "intermediate"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "documents": [
+    {
+      "id": "game_001",
+      "content": "Mobile Legends: Bang Bang is one of Malaysia's most popular mobile MOBAs. Key strategies include: 1) Lane rotation for objectives 2) Counter-picking heroes 3) Proper item builds based on enemy composition 4) Timing jungle invades with team 5) Securing turtle and lord objectives.",
+      "metadata": {
+        "game": "Mobile Legends",
+        "category": "strategy",
+        "platform": "mobile",
+        "genre": "moba",
+        "region": "MY",
+        "language": "en"
+      }
+    },
+    {
+      "id": "game_002",
+      "content": "PUBG Mobile tips for Malaysian players: 1) Use TPP peek advantage in urban areas 2) Best drop locations in Sanhok map 3) Recommended sensitivity settings for different phones 4) Common final circle positions and rotations 5) Vehicle spawns in Erangel.",
+      "metadata": {
+        "game": "PUBG Mobile",
+        "category": "tips",
+        "platform": "mobile",
+        "genre": "battle_royale",
+        "region": "MY",
+        "language": "en"
+      }
+    }
+  ]
+}

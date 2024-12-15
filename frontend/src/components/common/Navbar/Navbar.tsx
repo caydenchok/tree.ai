@@ -52,11 +52,12 @@ const Navbar: React.FC = () => {
       right={0}
       w="100%" 
       zIndex={1000}
-      bg="rgba(13, 17, 14, 0.92)"
-      backdropFilter="blur(10px)"
+      bg="rgba(34, 39, 29, 0.65)"
+      backdropFilter="blur(12px)"
+      WebkitBackdropFilter="blur(12px)"
       borderBottom="1px"
-      borderColor="rgba(205, 246, 131, 0.2)"
-      boxShadow="0 0 20px rgba(205, 246, 131, 0.05)"
+      borderColor="rgba(255, 255, 255, 0.1)"
+      boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
       px={4}
       py={2}
       safeAreaInset="top"
@@ -86,7 +87,7 @@ const Navbar: React.FC = () => {
               leftIcon={<BsChat />}
               bg="#CDF683"
               color="black"
-              _hover={{ bg: "#b5e853", transform: 'translateY(-1px)' }}
+              _hover={{ bg: "#bde472", transform: 'translateY(-1px)' }}
               _active={{ transform: 'translateY(0)' }}
               transition="all 0.2s"
               size="sm"

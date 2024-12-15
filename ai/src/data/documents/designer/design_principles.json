@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "design_001",
+      "content": "Malaysian interior design principles: 1) Fusion of traditional and modern elements 2) Ventilation considerations for tropical climate 3) Integration of local materials like rattan 4) Space planning for prayer rooms 5) Color schemes inspired by local culture.",
+      "metadata": {
+        "category": "interior_design",
+        "style": "malaysian_contemporary",
+        "application": "residential"
+      }
+    },
+    {
+      "id": "design_002",
+      "content": "Modern Malaysian architecture incorporates: 1) Sustainable cooling solutions 2) Traditional roof designs (like Minangkabau) 3) Islamic geometric patterns 4) Natural materials for tropical durability 5) Rain protection features.",
+      "metadata": {
+        "category": "architecture",
+        "style": "modern_malaysian",
+        "context": "tropical"
+      }
+    }
+  ]
+}

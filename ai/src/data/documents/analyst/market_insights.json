@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "analyst_001",
+      "content": "Malaysian market analysis techniques: 1) PEST analysis considering local political stability 2) Consumer behavior patterns during festive seasons 3) Impact of government policies like MyDIGITAL 4) E-commerce trends in urban vs rural areas 5) Digital payment adoption rates.",
+      "metadata": {
+        "category": "market_analysis",
+        "region": "malaysia",
+        "sector": "digital_economy"
+      }
+    },
+    {
+      "id": "analyst_002",
+      "content": "Data visualization best practices for Malaysian reports: 1) Color schemes considering cultural meanings 2) Bilingual labeling (EN/BM) 3) Currency formatting in RM 4) Date formats DD/MM/YYYY 5) Population demographics by state and ethnicity.",
+      "metadata": {
+        "category": "data_visualization",
+        "context": "malaysian",
+        "type": "reporting"
+      }
+    }
+  ]
+}

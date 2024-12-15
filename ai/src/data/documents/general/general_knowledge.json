@@ -1,0 +1,20 @@
+{
+  "documents": [
+    {
+      "id": "general_001",
+      "content": "Malaysia is a multicultural country in Southeast Asia known for its diverse heritage, modern cities, and beautiful natural landscapes. The country consists of 13 states and 3 federal territories.",
+      "metadata": {
+        "category": "general_knowledge",
+        "topic": "malaysia_overview"
+      }
+    },
+    {
+      "id": "general_002",
+      "content": "Kuala Lumpur, the capital of Malaysia, is home to the iconic Petronas Twin Towers, once the world's tallest buildings. The city is a hub of business, culture, and tourism.",
+      "metadata": {
+        "category": "general_knowledge",
+        "topic": "cities"
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "documents": [
+    {
+      "id": "esports_001",
+      "content": "Malaysia's esports scene is thriving with major tournaments like ESL MY Championship and MPL MY. Top Malaysian teams include TODAK (Mobile Legends), Yoodo RSG (PUBG Mobile), and Team SMG (Dota 2). Many tournaments offer prize pools ranging from RM10,000 to RM100,000.",
+      "metadata": {
+        "category": "esports",
+        "type": "tournament_info",
+        "region": "MY",
+        "language": "en"
+      }
+    },
+    {
+      "id": "esports_002",
+      "content": "How to start streaming in Malaysia: 1) Basic setup: PC/phone, stable internet (minimum 5Mbps upload) 2) Platforms: Facebook Gaming popular in MY 3) Content in BM/English for wider reach 4) Best streaming times: 8PM-12AM MYT 5) Mobile game streaming highly popular.",
+      "metadata": {
+        "category": "streaming",
+        "type": "guide",
+        "region": "MY",
+        "language": "en"
+      }
+    }
+  ]
+}

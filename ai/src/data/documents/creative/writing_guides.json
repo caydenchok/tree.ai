@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "creative_001",
+      "content": "Malaysian storytelling incorporates elements from various cultures: Malay folklore (hantu, orang bunian), Chinese mythology (naga, phoenix), and Indian epics. Modern Malaysian stories often blend these traditional elements with contemporary urban settings.",
+      "metadata": {
+        "category": "storytelling",
+        "tradition": "malaysian",
+        "level": "intermediate"
+      }
+    },
+    {
+      "id": "creative_002",
+      "content": "Pantun is a Malay poetic form with ABAB rhyme scheme. Each line typically has 8-12 syllables. The first two lines provide imagery (pembayang), while the last two deliver the message (maksud). Example: Pisang emas dibawa belayar, Masak sebiji di atas peti, Hutang emas boleh dibayar, Hutang budi dibawa mati.",
+      "metadata": {
+        "category": "poetry",
+        "form": "pantun",
+        "language": "malay"
+      }
+    }
+  ]
+}

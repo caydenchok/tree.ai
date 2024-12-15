@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "code_001",
+      "content": "Common React patterns in Malaysian tech companies: 1) Custom hooks for form validation with multiple languages 2) Context API for managing multilingual state 3) Responsive designs for mobile-first Malaysian users 4) Integration with local payment gateways like iPay88 and MOLPay.",
+      "metadata": {
+        "language": "javascript",
+        "framework": "react",
+        "context": "malaysian"
+      }
+    },
+    {
+      "id": "code_002",
+      "content": "Python data analysis for Malaysian datasets: Using pandas to analyze local business data, processing MyKad numbers, handling Malaysian date formats (DD/MM/YYYY), and working with Bank Negara Malaysia's open data API.",
+      "metadata": {
+        "language": "python",
+        "category": "data_analysis",
+        "region": "malaysia"
+      }
+    }
+  ]
+}

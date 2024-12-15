@@ -1,6 +1,7 @@
 import { Box, InputGroup, Input, InputRightElement, IconButton, Icon, HStack, Menu, MenuButton, MenuList, MenuItem, Text, useColorModeValue, Container } from '@chakra-ui/react';
 import { BsSend, BsLightningCharge, BsUpload, BsCamera } from 'react-icons/bs';
 import { FaRobot, FaBrain, FaGraduationCap, FaCode, FaPencilAlt, FaChartLine, FaGamepad, FaPaintBrush, FaBook } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 export type ChatMode = {
   id: string;
@@ -87,6 +88,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onKeyPress,
   inputRef
 }) => {
+  const navigate = useNavigate();
+
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -96,6 +99,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   const menuHoverBg = useColorModeValue('whiteAlpha.200', 'whiteAlpha.200');
   const selectedBg = useColorModeValue('whiteAlpha.300', 'whiteAlpha.300');
+
+  const handleModeChange = (mode: string) => {
+    console.log('Mode selected:', mode); // Debug log
+    if (mode === 'writer') {
+      console.log('Navigating to writer page'); // Debug log
+      window.location.href = '/writer';
+    } else {
+      onModeChange(mode);
+    }
+  };
 
   return (
     <Box
@@ -217,7 +230,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 {chatModes.map((mode) => (
                   <MenuItem
                     key={mode.id}
-                    onClick={() => onModeChange(mode.id)}
+                    onClick={() => handleModeChange(mode.id)}
                     bg={selectedMode === mode.id ? selectedBg : 'transparent'}
                     _hover={{ bg: menuHoverBg }}
                     icon={<Icon as={mode.icon} color="#CDF683" />}

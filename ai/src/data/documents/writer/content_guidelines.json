@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "writer_001",
+      "content": "Writing for Malaysian audiences requires understanding of local context: 1) Use of 'lah' and other local particles for casual content 2) Sensitivity to cultural and religious topics 3) Code-switching between English and local languages 4) References to local landmarks and culture 5) Malaysian English conventions.",
+      "metadata": {
+        "category": "style_guide",
+        "audience": "malaysian",
+        "type": "content_writing"
+      }
+    },
+    {
+      "id": "writer_002",
+      "content": "Business writing in Malaysia: 1) Formal letters should use British English spelling 2) Appropriate honorifics (Dato', Tan Sri) 3) Standard opening 'Tuan/Puan' for formal letters 4) Common closing 'Yang benar' or 'Sekian, terima kasih' 5) Proper formatting for government correspondence.",
+      "metadata": {
+        "category": "business_writing",
+        "context": "formal",
+        "region": "malaysia"
+      }
+    }
+  ]
+}

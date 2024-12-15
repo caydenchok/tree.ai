@@ -1,0 +1,22 @@
+{
+  "documents": [
+    {
+      "id": "code_001",
+      "content": "React is a popular JavaScript library for building user interfaces. It uses a virtual DOM to efficiently update the UI and follows a component-based architecture. Key concepts include hooks, props, and state management.",
+      "metadata": {
+        "category": "programming",
+        "topic": "react",
+        "level": "intermediate"
+      }
+    },
+    {
+      "id": "code_002",
+      "content": "Python is known for its simplicity and readability. It's widely used in data science, web development, and automation. Key features include dynamic typing, extensive libraries, and clean syntax.",
+      "metadata": {
+        "category": "programming",
+        "topic": "python",
+        "level": "beginner"
+      }
+    }
+  ]
+}
