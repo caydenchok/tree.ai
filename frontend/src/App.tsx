@@ -40,18 +40,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <Box
-        minH="100vh"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        bg="brand.dark.primary"
-        color="brand.primary"
-      >
-        Loading...
-      </Box>
-    );
+    return <LoadingFallback />;
   }
 
   if (!user) {
@@ -69,7 +58,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <LandingPage />
       </React.Suspense>
     ),
@@ -77,7 +66,7 @@ const router = createBrowserRouter([
   {
     path: '/tree-chat',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <TreeChat />
       </React.Suspense>
     ),
@@ -85,7 +74,7 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <Login />
       </React.Suspense>
     ),
@@ -93,7 +82,7 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <Register />
       </React.Suspense>
     ),
@@ -110,7 +99,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentDashboard />
         </ProtectedRoute>
@@ -120,7 +109,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/courses',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentCourses />
         </ProtectedRoute>
@@ -130,7 +119,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/schedule',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentSchedule />
         </ProtectedRoute>
@@ -140,7 +129,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/progress',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentProgress />
         </ProtectedRoute>
@@ -150,7 +139,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/messages',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentMessages />
         </ProtectedRoute>
@@ -160,7 +149,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/ai-assistant',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentAIAssistant />
         </ProtectedRoute>
@@ -170,7 +159,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/profile',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentProfile />
         </ProtectedRoute>
@@ -180,7 +169,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/homeworks',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentHomeworks />
         </ProtectedRoute>
@@ -190,7 +179,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/student/settings',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['student']}>
           <StudentSettings />
         </ProtectedRoute>
@@ -201,7 +190,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherDashboard />
         </ProtectedRoute>
@@ -211,7 +200,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher/students',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherStudents />
         </ProtectedRoute>
@@ -221,7 +210,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher/classes',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherClasses />
         </ProtectedRoute>
@@ -231,7 +220,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher/analytics',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherAnalytics />
         </ProtectedRoute>
@@ -241,7 +230,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher/messages',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherMessage />
         </ProtectedRoute>
@@ -251,7 +240,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher/ai-assistant',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherAIAssistant />
         </ProtectedRoute>
@@ -261,7 +250,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/teacher/settings',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['teacher']}>
           <TeacherSettings />
         </ProtectedRoute>
@@ -271,7 +260,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/admin/*',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['admin']}>
           <AdminDashboard />
         </ProtectedRoute>
@@ -281,7 +270,7 @@ const router = createBrowserRouter([
   {
     path: '/dashboard/parent/*',
     element: (
-      <React.Suspense fallback={<Box>Loading...</Box>}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <ProtectedRoute allowedRoles={['parent']}>
           <ParentDashboard />
         </ProtectedRoute>
